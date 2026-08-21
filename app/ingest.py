@@ -63,6 +63,30 @@ def _create_indexes(conn) -> None:
             pass
 
 
+def _source_files(config: Config) -> list[Path]:
+    nanpa_dir = config.NANPA_DIR
+    return [
+        nanpa_dir / "npa_report.csv",
+        nanpa_dir / "CoCodeAssignment_Utilized_AllStates_Public.txt",
+        nanpa_dir / "COCodeStatus_ALL.csv",
+    ]
+
+
+def _file_age_days(path: Path) -> float | None:
+    if not path.exists():
+        return None
+    return (time.time() - path.stat().st_mtime) / 86400
+
+
+def source_files_are_fresh(config: Config) -> bool:
+    max_age_days = config.DB_MAX_AGE_DAYS
+    for path in _source_files(config):
+        age_days = _file_age_days(path)
+        if age_days is None or age_days >= max_age_days:
+            return False
+    return True
+
+
 def database_is_fresh(config: Config) -> bool:
     db_path = config.DB_PATH
     if not db_path.exists():
@@ -71,19 +95,11 @@ def database_is_fresh(config: Config) -> bool:
     return age_seconds < config.DB_MAX_AGE_DAYS * 86400
 
 
-def refresh_database(config: Config | None = None, force: bool = False) -> Path:
-    config = config or Config()
-    config.NANPA_DIR.mkdir(parents=True, exist_ok=True)
-
-    if not force and database_is_fresh(config):
-        return config.DB_PATH
-
+def _download_sources(config: Config) -> None:
     verify = config.REQUESTS_VERIFY
     npa_csv = config.NANPA_DIR / "npa_report.csv"
     us_oc_zip = config.NANPA_DIR / "CoCodeAssignment_Utilized_AllStates_Public.zip"
-    us_oc_txt = config.NANPA_DIR / "CoCodeAssignment_Utilized_AllStates_Public.txt"
     ca_oc_zip = config.NANPA_DIR / "COCodeStatus_ALL.zip"
-    ca_oc_csv = config.NANPA_DIR / "COCodeStatus_ALL.csv"
 
     _download(config.NANPA_NPA_URL, npa_csv, verify)
     _download(config.NANPA_OC_ZIP_URL, us_oc_zip, verify)
@@ -94,12 +110,40 @@ def refresh_database(config: Config | None = None, force: bool = False) -> Path:
     with ZipFile(ca_oc_zip, "r") as archive:
         archive.extractall(config.NANPA_DIR)
 
+
+def _rebuild_database(config: Config) -> None:
+    npa_csv = config.NANPA_DIR / "npa_report.csv"
+    us_oc_txt = config.NANPA_DIR / "CoCodeAssignment_Utilized_AllStates_Public.txt"
+    ca_oc_csv = config.NANPA_DIR / "COCodeStatus_ALL.csv"
+
     with db_connection(config.DB_PATH) as conn:
         _load_us_office_codes(conn, us_oc_txt)
         _load_area_codes(conn, npa_csv)
         _load_canada_office_codes(conn, ca_oc_csv)
         _load_ocn_table(conn)
         _create_indexes(conn)
+
+
+def refresh_database(config: Config | None = None, force: bool = False) -> Path:
+    config = config or Config()
+    config.NANPA_DIR.mkdir(parents=True, exist_ok=True)
+
+    need_download = force or not source_files_are_fresh(config)
+    need_rebuild = (
+        force
+        or need_download
+        or not config.DB_PATH.exists()
+        or not database_is_fresh(config)
+    )
+
+    if not need_download and not need_rebuild:
+        return config.DB_PATH
+
+    if need_download:
+        _download_sources(config)
+
+    if need_rebuild:
+        _rebuild_database(config)
 
     return config.DB_PATH
 

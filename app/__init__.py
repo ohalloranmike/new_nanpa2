@@ -8,7 +8,7 @@ from starlette.staticfiles import StaticFiles
 
 from app.config import Config
 from app.database import close_request_connection, reset_db_context, set_db_context
-from app.ingest import database_is_fresh, refresh_database
+from app.ingest import database_is_fresh, refresh_database, source_files_are_fresh
 from app.templating import init_templates
 
 
@@ -18,7 +18,7 @@ def create_app(config_class=Config) -> FastAPI:
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         db_last_updated = _db_timestamp(config.DB_PATH)
-        if config.REFRESH_ON_START or not database_is_fresh(config):
+        if config.REFRESH_ON_START or not source_files_are_fresh(config) or not database_is_fresh(config):
             refresh_database(config, force=config.REFRESH_ON_START)
             db_last_updated = _db_timestamp(config.DB_PATH)
         app.state.config = config
