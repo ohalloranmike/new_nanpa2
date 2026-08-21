@@ -11,6 +11,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Parameterized SQLite queries
 - Project-relative paths (no hardcoded user directories)
 - Automatic refresh of stale NANPA/CNAC source files and SQLite database
+- Home page shows current data date with a live progress update window
 - Separate data refresh command (`refresh_data.py`)
 - Responsive UI with shared CSS
 - Feature parity with original app routes
@@ -48,6 +49,16 @@ On startup, the app checks:
 If any source file is missing or older than 7 days, new files are downloaded and the database is rebuilt. If source files are still fresh but the database is missing or stale, the database is rebuilt from the existing files without re-downloading.
 
 Set `NANPA_REFRESH_ON_START=1` to force a full download and rebuild on every launch.
+
+### Update from the home page
+
+The home page shows the current database date and an **Update data now** button. That opens a progress page at `/refresh-data` with:
+
+- A progress bar and percentage
+- The current step (download, extract, SQLite load, index build)
+- A scrollable log of completed steps
+
+Progress is streamed live from `/refresh-data/stream` using Server-Sent Events while NANPA and CNAC files are downloaded and the SQLite database is rebuilt.
 
 ### Manual refresh
 
@@ -102,7 +113,10 @@ nanpa2/
     maps.py
     templating.py        # Jinja2 helpers and url_for compatibility
     routes/
+      home.py            # Home page and refresh UI routes
+      refresh_stream.py  # SSE progress stream for data updates
   templates/
+    refresh_data.html    # Live update progress page
   static/
     css/
     NANPA/               # Downloaded data and generated pn.db (mostly gitignored)
@@ -118,3 +132,4 @@ nanpa2/
 - Map images and curated CSV lists are stored under `static/`.
 - Generated NANPA download files and `pn.db` are gitignored.
 - First run may take a minute while source files download and the database is built.
+- The US office code file parser ignores NANPA's trailing header-only `File Updated` column.

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Updating Data{% endblock %}
+
+{% block content %}
+<section class="card progress-window">
+    <h2>Updating Data</h2>
+    <p class="meta">Downloading NANPA and CNAC source files and rebuilding the local database.</p>
+
+    <div class="progress-bar" aria-hidden="true">
+        <div id="progress-fill" class="progress-bar-fill"></div>
+    </div>
+    <p id="progress-percent" class="progress-percent">0%</p>
+    <p id="progress-status" class="progress-status">Connecting...</p>
+
+    <ol id="progress-log" class="progress-log"></ol>
+
+    <div id="progress-actions" class="progress-actions" hidden>
+        <a class="btn" id="progress-home" href="{{ url_for('home.index') }}">Return home</a>
+    </div>
+</section>
+
+<script>
+(() => {
+    const fill = document.getElementById("progress-fill");
+    const percentLabel = document.getElementById("progress-percent");
+    const status = document.getElementById("progress-status");
+    const log = document.getElementById("progress-log");
+    const actions = document.getElementById("progress-actions");
+    const homeLink = document.getElementById("progress-home");
+    const terminalStages = new Set(["complete", "error", "uptodate"]);
+
+    function appendLog(message) {
+        const item = document.createElement("li");
+        item.textContent = message;
+        log.appendChild(item);
+        log.scrollTop = log.scrollHeight;
+    }
+
+    function updateProgress(data) {
+        const percent = Number.isFinite(data.percent) ? Math.max(0, Math.min(100, data.percent)) : 0;
+        fill.style.width = `${percent}%`;
+        percentLabel.textContent = `${percent}%`;
+        status.textContent = data.message || "Working...";
+        appendLog(data.message || "Working...");
+
+        if (terminalStages.has(data.stage)) {
+            actions.hidden = false;
+            if (data.stage === "complete") {
+                status.classList.add("success");
+                homeLink.href = "{{ url_for('home.index') }}?updated=1";
+            } else if (data.stage === "error") {
+                status.classList.add("error");
+            }
+        }
+    }
+
+    const source = new EventSource("{{ url_for('home.refresh_data_stream') }}");
+    source.onmessage = (event) => {
+        let data;
+        try {
+            data = JSON.parse(event.data);
+            updateProgress(data);
+        } catch (err) {
+            status.textContent = "Received invalid progress update.";
+            status.classList.add("error");
+            actions.hidden = false;
+            source.close();
+            return;
+        }
+        if (terminalStages.has(data.stage)) {
+            source.close();
+        }
+    };
+    source.onerror = () => {
+        status.textContent = "Lost connection to the update stream.";
+        status.classList.add("error");
+        actions.hidden = false;
+        source.close();
+    };
+})();
+</script>
+{% endblock %}
