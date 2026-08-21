@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}NANPA Info{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+</head>
+<body>
+<header class="site-header">
+    <div class="container brand">
+        <img src="{{ url_for('static', filename='phone.jpg') }}" alt="Phone icon">
+        <div>
+            <h1>{{ page_header or "NANPA Numbering Plan Explorer" }}</h1>
+            <p>Public data from <a href="https://nanpa.com" target="_blank" rel="noopener">nanpa.com</a> and
+                <a href="https://www.cnac.ca" target="_blank" rel="noopener">cnac.ca</a></p>
+        </div>
+    </div>
+    <div class="container nav">
+        <a href="{{ url_for('home.index') }}">Home</a>
+        <a href="{{ url_for('lists.area_code_list') }}">Area Code List</a>
+        <a href="{{ url_for('lists.special_service_numbers') }}">Special Service Numbers</a>
+        <a href="{{ url_for('ocn.ocn_all') }}">US Operating Companies</a>
+        <a href="{{ url_for('ocn.canada_ocn_all', sort='company') }}">Canada OCN List</a>
+    </div>
+</header>
+
+<main class="container">
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="site-footer">
+    <div class="container">
+        <p class="meta">Database last updated: {{ db_last_updated or "Unknown" }}</p>
+        <p>API by Mike O'Halloran · <a href="mailto:ohalloranmike@outlook.com">ohalloranmike@outlook.com</a></p>
+    </div>
+</footer>
+</body>
+</html>

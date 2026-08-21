@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Office Code {{ npanxx }}</h2>
+    <p>{{ province }}</p>
+    <dl class="kv-grid">
+        {% for key, value in oc.items() %}
+            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+        {% endfor %}
+    </dl>
+    <div class="stacked-links">
+        <a href="{{ url_for('browse.rate_center_detail', rc=exchange_area, state=province, country='CANADA') }}">
+            View all codes in exchange area {{ exchange_area }}
+        </a>
+        <a href="{{ url_for('browse.company_detail', ocn=ocn, companyname=company, state=province, country='CANADA') }}">
+            View all codes for OCN {{ ocn }}
+        </a>
+    </div>
+</section>
+
+<section class="card">
+    <h3>Area Code {{ npa }}</h3>
+    <dl class="kv-grid">
+        {% for key, value in ac.items() %}
+            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+        {% endfor %}
+    </dl>
+</section>
+
+{% if map_file %}
+<section class="card maps">
+    <img src="{{ url_for('static', filename='CanadaACMaps/' ~ map_file) }}" alt="Canada map">
+</section>
+{% endif %}
+{% endblock %}

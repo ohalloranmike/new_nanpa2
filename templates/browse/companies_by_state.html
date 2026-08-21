@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Operating Companies in {{ state }}</h2>
+    <table class="data-table">
+        <thead><tr><th>Company</th><th>OCN</th><th>Actions</th></tr></thead>
+        <tbody>
+        {% for row in rows %}
+            <tr>
+                <td>{{ row.Company }}</td>
+                <td>{{ row.OCN }}</td>
+                <td>
+                    <a href="{{ url_for('browse.company_detail', ocn=row.OCN, companyname=row.Company, state=state, country='US') }}">View codes</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

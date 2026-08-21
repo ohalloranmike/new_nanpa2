@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Area Code {{ npa }}</h2>
+    <p><strong>{{ state_name }}</strong></p>
+    <dl class="kv-grid">
+        {% for key, value in ac.items() %}
+            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+        {% endfor %}
+    </dl>
+</section>
+
+<section class="card">
+    <h3>Office Codes in {{ npa }}</h3>
+    {% for status, codes in office_codes_by_status.items() %}
+        <h4>{{ status }}</h4>
+        <div class="pill-list">
+            {% for code in codes %}
+                <a href="{{ url_for('lookup.office_codes', **{'npa-nxx': npa ~ '-' ~ code}) }}">{{ code }}</a>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</section>
+
+{% if map_file %}
+<section class="card maps">
+    <img src="{{ url_for('static', filename='USTerritoryACMaps/' ~ map_file) }}" alt="Territory map">
+</section>
+{% endif %}
+{% endblock %}

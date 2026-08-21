@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Area Code {{ npa }}</h2>
+    <p><strong>{{ state_name }}</strong> ({{ state_code }})</p>
+    <dl class="kv-grid">
+        {% for key, value in ac.items() %}
+            {% if value %}
+                <dt>{{ key }}</dt><dd>{{ value }}</dd>
+            {% endif %}
+        {% endfor %}
+    </dl>
+</section>
+
+<section class="card">
+    <h3>Office Codes in {{ npa }}</h3>
+    {% for status, codes in office_codes_by_status.items() %}
+        <h4>{{ status }}</h4>
+        <div class="pill-list">
+            {% for code in codes %}
+                <a href="{{ url_for('lookup.office_codes', **{'npa-nxx': npa ~ '-' ~ code}) }}">{{ code }}</a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No office codes found.</p>
+    {% endfor %}
+</section>
+
+<section class="card maps">
+    <h3>Maps</h3>
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '.gif') }}" alt="US map {{ state_code }}">
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '-inset1.gif') }}" alt="Inset 1 {{ state_code }}">
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '-inset2.gif') }}" alt="Inset 2 {{ state_code }}">
+    <img src="{{ url_for('static', filename='USStateMaps/' ~ state_code ~ '.png') }}" alt="State map {{ state_code }}">
+</section>
+{% endblock %}

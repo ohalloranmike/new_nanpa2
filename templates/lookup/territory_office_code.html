@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Office Code {{ npanxx }}</h2>
+    <p>{{ territory_name }} ({{ territory_code }})</p>
+    <dl class="kv-grid">
+        {% for key, value in oc.items() %}
+            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+        {% endfor %}
+    </dl>
+</section>
+
+<section class="card">
+    <h3>Area Code {{ npa }}</h3>
+    <dl class="kv-grid">
+        {% for key, value in ac.items() %}
+            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+        {% endfor %}
+    </dl>
+</section>
+
+{% if map_file %}
+<section class="card maps">
+    <img src="{{ url_for('static', filename='USTerritoryACMaps/' ~ map_file) }}" alt="Territory map">
+</section>
+{% endif %}
+{% endblock %}

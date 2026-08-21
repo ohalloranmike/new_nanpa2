@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>{{ title }} ({{ state_code }})</h2>
+    <div class="pill-list">
+        {% for npa in npas %}
+            <a href="{{ url_for('lookup.area_codes', npa=npa) }}">{{ npa }}</a>
+        {% endfor %}
+    </div>
+</section>
+<section class="card maps">
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '.gif') }}" alt="Map">
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '-inset1.gif') }}" alt="Inset 1">
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '-inset2.gif') }}" alt="Inset 2">
+    <img src="{{ url_for('static', filename='USStateMaps/' ~ state_code ~ '.png') }}" alt="State map">
+</section>
+{% endblock %}

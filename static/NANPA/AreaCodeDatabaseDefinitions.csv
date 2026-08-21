@@ -1,0 +1,33 @@
+Field Name,Description
+NPA,The NPA or Area Code
+Type of Code,"What type of code is this NPA (Easily Recognizable Code, General Purpose Code)"
+Assignable,Is this NPA assignable (Yes/No)
+Explanation,"Is the NPA is not assignable (no in previous field), this is the reason it is not assignable"
+Reserved,Is the NPA reserved for the relief of another NPA (Yes/No)
+Assigned?,Is the NPA assigned for use (Yes/No)
+Asgt Date,What date was the assignment made
+Use,What is the Use of this code (N - nongeograpic; G - Geographic)
+Location,"The geographic location to which the code is assigned (AL, TX, Manitoba, etc.)"
+Country,"The country to which the assignment was made (US, CANADA, BAHAMAS, etc.)"
+In Service?,Is this NPA in service (Yes/No)
+In Svc Date,What date was this NPA placed in service
+Status,"The status of the NPA relief activity (Active, Postponed, Suspended)"
+PL,The Planning Letter Number(s) about this NPA
+BLANK,
+Overlay,Is this NPA part of an overlay (Yes/No)
+Overlay Complex,"If this NPA is part of an overlay complex, what is the overlay complex (214/469/972; 212/646/917; etc.)"
+Parent,"What was the parent NPA, that from which this NPA split."
+Service,Special annotation for services accomodated by this NPA
+Time Zone,The predominant time zone (s) for this NPA (A - Atlantic; E- Eastern; C - Central; P - Pacific; etc)
+BLANK,
+Map,"A map of the NPA can be found with this Planning Letter (ex.: 342; 288, etc.)"
+Is NPA in Jeopardy?,Yes or 'blank'
+Is Relief Planning in Progress,"For General Purpose Codes, has relief planning begun (Yes/No)"
+Home NPA Local Calls,Predominant dialing pattern on Home NPA Local Calls (7D - seven digits; 10D - ten digits)
+Home NPA Toll Calls,Predominant dialing pattern on Home NPA Toll Calls (7D - seven digits; 10D - ten digits; 1+7D - one plus seven digits; 1+10D - one plus ten digits)
+Foreign NPA Local Calls,Predominant dialing pattern on Foreign NPA Local Calls (7D - seven digits; 10D - ten digits; 1+7D - one plus seven digits; 1+10D - one plus ten digits)
+Foreign NPA Toll Calls,Predominant dialing pattern on Foreign NPA Toll Calls (7D - seven digits; 10D - ten digits; 1+7D - one plus seven digits; 1+10D - one plus ten digits)
+perm HNPA local,Permissive dialing pattern on Home NPA Local Calls (7D - seven digits; 10D - ten digits)
+perm HNPA toll,Permissive dialing pattern on Home NPA Toll Calls (7D - seven digits; 10D - ten digits; 1+7D - one plus seven digits)
+perm FNPA local,Permissive dialing pattern on Foreign NPA Local Calls (7D - seven digits; 10D - ten digits)
+dp Notes,Miscellaneous notes on the dialing plan for the specified NPA

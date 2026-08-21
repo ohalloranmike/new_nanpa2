@@ -1,0 +1,11 @@
+.venv/
+.idea/
+__pycache__/
+*.pyc
+
+static/NANPA/pn.db
+static/NANPA/npa_report.csv
+static/NANPA/CoCodeAssignment_Utilized_AllStates_Public.txt
+static/NANPA/CoCodeAssignment_Utilized_AllStates_Public.zip
+static/NANPA/COCodeStatus_ALL.csv
+static/NANPA/COCodeStatus_ALL.zip

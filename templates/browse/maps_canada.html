@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>{{ title }}</h2>
+    <div class="pill-list">
+        {% for npa in npas %}
+            <a href="{{ url_for('lookup.area_codes', npa=npa) }}">{{ npa }}</a>
+        {% endfor %}
+    </div>
+</section>
+{% if map_file %}
+<section class="card maps">
+    <img src="{{ url_for('static', filename='CanadaACMaps/' ~ map_file) }}" alt="Canada map">
+</section>
+{% endif %}
+{% endblock %}

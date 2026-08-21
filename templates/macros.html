@@ -1,0 +1,20 @@
+{% macro state_form(action, field_name, label, options) %}
+<form action="{{ action }}" method="get" class="card">
+    <label for="{{ field_name }}">{{ label }}</label>
+    <select id="{{ field_name }}" name="{{ field_name }}">
+        {% for key, value in options.items() %}
+            <option value="{{ key }}">{{ value }} ({{ key }})</option>
+        {% endfor %}
+    </select>
+    <button type="submit">View</button>
+</form>
+{% endmacro %}
+
+{% macro search_form(action, field_name, label, maxlength, placeholder) %}
+<form action="{{ action }}" method="get" class="card">
+    <label for="{{ field_name }}">{{ label }}</label>
+    <input id="{{ field_name }}" type="text" name="{{ field_name }}" maxlength="{{ maxlength }}"
+           placeholder="{{ placeholder }}" inputmode="numeric" pattern="[0-9-]*">
+    <button type="submit">Search</button>
+</form>
+{% endmacro %}

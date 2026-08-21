@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Office Code {{ npanxx }}</h2>
+    <p>{{ state_name }} ({{ state_code }})</p>
+    <dl class="kv-grid">
+        {% for key, value in oc.items() %}
+            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+        {% endfor %}
+    </dl>
+    <div class="stacked-links">
+        <a href="{{ url_for('browse.rate_center_detail', rc=rate_center, state=state_code, country='US') }}">
+            View all codes in rate center {{ rate_center }}
+        </a>
+        <a href="{{ url_for('browse.company_detail', ocn=ocn, companyname=company, state=state_code, country='US') }}">
+            View all codes for OCN {{ ocn }}
+        </a>
+    </div>
+</section>
+
+<section class="card">
+    <h3>Area Code {{ npa }}</h3>
+    <dl class="kv-grid">
+        {% for key, value in ac.items() %}
+            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+        {% endfor %}
+    </dl>
+</section>
+
+<section class="card">
+    <h3>Office Code Use Definitions</h3>
+    <ul>
+        {% for key, value in use_definitions.items() %}
+            <li><strong>{{ key }}:</strong> {{ value }}</li>
+        {% endfor %}
+    </ul>
+</section>
+
+<section class="card maps">
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '.gif') }}" alt="US map">
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '-inset1.gif') }}" alt="Inset 1">
+    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '-inset2.gif') }}" alt="Inset 2">
+    <img src="{{ url_for('static', filename='USStateMaps/' ~ state_code ~ '.png') }}" alt="State map">
+</section>
+{% endblock %}

@@ -1,0 +1,15 @@
+Field,Definition
+State Abbreviation,Standard two character abbreviation.
+NPA-NXX,Area Code and Prefix
+OCN,Operating Company Number
+Company Name,Full Company Name; Company Names are enclosed with quotes if they contain special characters.
+Rate Center,10 character abbreviation for the Rate Center in which the code is assigned.
+Future Effective Date (EffectiveDate),"The future date when a new code will be in service (for new codes only). Once the effective date is reached, this date will no longer appear."
+Use-VC,VC indicates codes that are vacant; they are available for assignment to a service provider.
+Use-AS,AS indicates codes that are assigned to a service provider.
+Use-PR,"PR indicates codes that are protected for a split; that is, these codes are assigned in the old or the new NPA and can not be assigned in the other NPA until after the end of permissive dialing."
+Use-RV,RV indicates codes that have been reserved by a service provider. The identity of the service provider is considered proprietary information and will not be shown.
+Use-UA,"UA indicates codes that are unavailable for assignment. These codes include, but are not limited to, test and special use codes (e.g., 958, 959, 555, time), N11 and other unique codes (e.g., 976, 950), codes set aside for pooling, and codes with special dialing arrangements (e.g., 7-digit dialing cross NPA boundary)."
+,
+AssignedDate,Date the code was assigned to the service provider by NANPA. This field is populated only for those codes assigned from January 2001 on.
+InitialorGrowth,"Initial is the first geographic NXX code assigned at a unique switching entity or point of interconnection for a service provider. Growth is a code assigned to a switching entity or point of interconnection subsequent to the assignment of the first code, for the same purpose as a code that was previously assigned for a service provider to the same switching entity or point of interconnection."

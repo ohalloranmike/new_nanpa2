@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "macros.html" import search_form, state_form %}
+
+{% block content %}
+<section class="card">
+    <h2>Search</h2>
+    <div class="grid-2">
+        {{ search_form(url_for('lookup.area_codes'), 'npa', 'Area Code (NPA)', 3, '503') }}
+        {{ search_form(url_for('lookup.office_codes'), 'npa-nxx', 'Area Code + Office Code', 7, '503-555') }}
+    </div>
+</section>
+
+<section class="card">
+    <h2>Browse by Region</h2>
+    <h3>US States</h3>
+    <div class="grid-2">
+        {{ state_form(url_for('browse.area_code_maps'), 'state', 'Area codes by state', states) }}
+        {{ state_form(url_for('browse.rate_centers_by_state'), 'rcs', 'Rate centers by state', states) }}
+        {{ state_form(url_for('browse.companies_by_state'), 'cs', 'Operating companies by state', states) }}
+    </div>
+
+    <h3>US Territories</h3>
+    <div class="grid-2">
+        {{ state_form(url_for('browse.area_code_maps'), 'state', 'Area codes by territory', us_territories) }}
+        {{ state_form(url_for('browse.rate_centers_by_state'), 'rcs', 'Rate centers by territory', us_territories) }}
+        {{ state_form(url_for('browse.companies_by_state'), 'cs', 'Operating companies by territory', us_territories) }}
+    </div>
+
+    <h3>Canada Provinces / Territories</h3>
+    {{ state_form(url_for('browse.area_code_maps'), 'state', 'Area codes by province/territory', canada_pt) }}
+</section>
+
+<section class="card">
+    <h2>Countries</h2>
+    <div class="pill-list">
+        {% for key, label in countries.items() %}
+            <a href="{{ url_for('browse.area_code_maps', state=key) }}">{{ label }}</a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="card">
+    <h2>Lists</h2>
+    <div class="list-links">
+        <a href="{{ url_for('lists.area_code_list') }}">All area codes sorted by NPA</a>
+        <a href="{{ url_for('lists.special_service_numbers') }}">Special service numbers</a>
+        <a href="{{ url_for('lists.n11_codes') }}">N11 codes</a>
+        <a href="{{ url_for('lists.codes_900') }}">900 codes</a>
+        <a href="{{ url_for('ocn.ocn_all') }}">US operating companies sorted by company</a>
+        <a href="{{ url_for('ocn.canada_ocn_all', sort='company') }}">Canada operating companies (by company)</a>
+        <a href="{{ url_for('ocn.canada_ocn_all', sort='ocn') }}">Canada operating companies (by OCN)</a>
+        <a href="{{ url_for('ocn.canada_exchange_all', sort='npa') }}">Canada exchange areas (by NPA)</a>
+        <a href="{{ url_for('ocn.canada_exchange_all', sort='company') }}">Canada exchange areas (by company)</a>
+    </div>
+
+    <form action="{{ url_for('ocn.ocn_detail') }}" method="get" style="margin-top: 1rem;">
+        <label for="ocn">Find US operating company by OCN</label>
+        <input id="ocn" type="text" name="ocn" maxlength="4" placeholder="e.g. 1234">
+        <button type="submit">Search OCN</button>
+    </form>
+</section>
+{% endblock %}

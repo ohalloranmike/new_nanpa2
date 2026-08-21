@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Area Code {{ npa }}</h2>
+    <p><strong>{{ location }}</strong></p>
+    <dl class="kv-grid">
+        {% for key, value in ac.items() %}
+            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+        {% endfor %}
+    </dl>
+</section>
+
+{% if map_file %}
+<section class="card maps">
+    <img src="{{ url_for('static', filename='CountryACMaps/' ~ map_file) }}" alt="Country map">
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>{{ company_name }} (OCN {{ ocn }}) — {{ state }}</h2>
+    <h3>By NPANXX</h3>
+    <table class="data-table">
+        <thead><tr><th>NPANXX</th><th>Rate Center</th></tr></thead>
+        <tbody>
+        {% for row in by_npanxx %}
+            <tr>
+                <td><a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPANXX}) }}">{{ row.NPANXX }}</a></td>
+                <td>{{ row.RateCenter }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>By Rate Center</h3>
+    <table class="data-table">
+        <thead><tr><th>NPANXX</th><th>Rate Center</th></tr></thead>
+        <tbody>
+        {% for row in by_rate_center %}
+            <tr>
+                <td><a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPANXX}) }}">{{ row.NPANXX }}</a></td>
+                <td>{{ row.RateCenter }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

@@ -1,0 +1,173 @@
+Country,reserved extension,Description
+United States and Canada,911,Emergency
+United States and Canada,988,Suicide prevention hotline (US only)
+United States and Canada,933,Commonly used by 911 operator
+United States and Canada,112,Emergency number for EU; usually forwards calls to emergency services
+United States and Canada,999,Emergency number for the United Kingdom; usually forwards calls to emergency services
+United States and Canada,211,Community information and referral services
+United States and Canada,311,Non-emergency police and other governmental services
+United States and Canada,411,Local directory assistance
+United States and Canada,511,Traffic and transportation information
+United States and Canada,611,Phone line repair services; phone support line if dialing from a softphone
+United States and Canada,711,Relay service for people with hearing or speech disabilities
+United States and Canada,811,Before-you-dig services in US; non-urgent telehealth services in Canada
+United Kingdom,112,Emergency number for the EU
+United Kingdom,999,Emergency number for the United Kingdom
+United Kingdom,911,Usually forwards calls to emergency services
+United Kingdom,933,Commonly used by 911 operator
+United Kingdom,100,Local operator assistance for landlines
+United Kingdom,101,Non-urgent crime and community safety calls
+United Kingdom,105,Local electricity network operators
+United Kingdom,111,Non-emergency calls to the National Health Service (NHS)
+United Kingdom,123,Speaking clock service
+United Kingdom,155,International operator assistance
+United Kingdom,144,Withhold number (service provided by carriers)
+United Kingdom,1470,Release number (service provided by carriers)
+United Kingdom,1471,Return call (service provided by carriers)
+United Kingdom,1475,Removes details of last call from 1471 (service provided by carriers)
+United Kingdom,1477,Automatic Call Trace (service provided by carriers)
+United Kingdom,1571,Voicemail (service provided by carriers)
+Argentina,911,Emergency
+Argentina,100,Fire
+Argentina,101,Police
+Argentina,107,Ambulance
+Argentina,110,Directory service
+Australia,000,Emergency
+Australia,106,TTY emergency (for the hearing impaired)
+Australia,112,Alternative access to emergency services
+Australia,132500,State Emergency Service (SES)
+Australia,131444,Non-emergency police
+Austria,112,Emergency
+Austria,118,Directory service
+Austria,122,Fire department
+Austria,133,Police
+Austria,144,Ambulance
+Belgium,112,Emergency
+Belgium,100,Fire brigade and ambulance
+Belgium,101,Police
+Brazil,190,Police
+Brazil,192,Ambulance
+Brazil,193,Fire
+Bulgaria,112,Emergency
+Chile,131,Ambulance
+Chile,132,Fire
+Chile,133,Police
+China,110,Police
+China,119,Fire
+China,120,Ambulance
+China,122,Traffic accident
+China,999,Private ambulance service (Beijing only)
+China,114,Directory assistance
+Colombia,112,Police
+Colombia,119,Fire
+Colombia,123,Emergency
+Colombia,125,Ambulance
+Colombia,132,Ambulance
+Colombia,165,Anti-kidnapping hotline
+Costa Rica,911,Emergency
+Costa Rica,112,Emergency (mobile)
+Croatia,112,Emergency
+Croatia,192,Police
+Croatia,193,Fire
+Croatia,194,Ambulance
+Cyprus,112,Emergency
+Czech Republic,112,Emergency
+Czech Republic,150,Fire
+Czech Republic,155,Ambulance
+Czech Republic,156,Municipal police
+Czech Republic,158,Police
+Denmark,112,Emergency
+Denmark,114,Non-emergency police
+Ecuador,911,Emergency
+Ecuador,101,Police
+Ecuador,102,Fire
+Ecuador,131,Ambulance
+Estonia,112,Emergency
+Finland,112,Emergency
+France,112,Emergency
+Germany,112,Emergency
+Germany,110,Police
+Germany,115,Civil services
+Greece,112,Emergency
+Greece,100,Police
+Greece,166,Ambulance
+Greece,199,Fire
+"Hong Kong, China",999,Emergency
+"Hong Kong, China",112,Emergency (mobile)
+Hungary,112,Emergency
+Hungary,104,Ambulance
+Hungary,105,Fire
+Hungary,107,Police
+India,100,Police
+India,102,Ambulance
+India,108,Ambulance service operated in 22 states
+India,101,Fire
+India,112,Alternative emergency number
+India,1906,Gas leakage
+India,1363,Tourist Helpline
+India,1098,Child Helpline
+India,104,Blood Needs
+India,181,Women Helpline
+Ireland,112,Emergency
+Ireland,999,Emergency
+Israel,100,Police
+Israel,101,Ambulance
+Israel,102,Fire
+Italy,112,Emergency
+Italy,113,Police
+Italy,115,Fire
+Italy,118,Ambulance
+Japan,110,Police
+Japan,119,Fire and ambulance
+Lithuania,112,Emergency
+Luxembourg,112,Emergency
+Mexico,911,Emergency
+The Netherlands,112,Emergency
+New Zealand,111,Emergency
+New Zealand,105,Non-emergency police number
+Norway,112,Emergency
+Norway,107,Police
+Norway,110,Fire
+Norway,113,Ambulance
+Panama,911,Emergency
+Panama,102,Directory Assistance
+Panama,103,Fire or ambulance
+Panama,104,Police
+Peru,911,Emergency
+Peru,100,Domestic violence
+Peru,103,Telephone information number
+Peru,105,Police
+Peru,106,Ambulance (SAMU)
+Peru,115,Civil defense
+Peru,116,Fire
+Peru,117,Ambulance
+Poland,112,Emergency
+Poland,999,Emergency
+Portugal,112,Emergency
+Portugal,117,Fire
+Portugal,144,Social emergency
+Romania,112,Emergency
+Singapore,999,Emergency
+Singapore,995,Singapore Civil Defence Force - fire or emergency ambulance
+Slovakia,112,Emergency
+Slovakia,150,Fire
+Slovakia,155,Ambulance
+Slovakia,158,Police
+Slovakia,159,Municipal police
+Slovenia,112,Emergency
+Slovenia,113,Police
+South Korea,112,Emergency police
+South Korea,119,Fire or ambulance
+Spain,112,Emergency
+Spain,118,Directory assistance
+Sweden,112,Emergency
+Sweden,110,Helpline
+Sweden,11313,Information during accidents and crises
+Sweden,11414,Police
+Switzerland,112,Emergency
+Switzerland,117,Police
+Switzerland,118,Fire
+Switzerland,144,Ambulance
+Turkey,112,Emergency
+Turkey,110,Fire
+Turkey,115,Police

@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>{{ company_name }} (OCN {{ ocn }})</h2>
+    <h3>By NPA / NXX</h3>
+    <table class="data-table">
+        <thead><tr><th>NPA</th><th>NXX</th><th>Exchange Area</th></tr></thead>
+        <tbody>
+        {% for row in by_npanxx %}
+            <tr>
+                <td>{{ row.NPA }}</td>
+                <td><a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPA ~ '-' ~ row.COCodeNXX}) }}">{{ row.COCodeNXX }}</a></td>
+                <td>{{ row.ExchangeArea }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <h3>By Exchange Area</h3>
+    <table class="data-table">
+        <thead><tr><th>NPA</th><th>NXX</th><th>Exchange Area</th></tr></thead>
+        <tbody>
+        {% for row in by_exchange %}
+            <tr>
+                <td>{{ row.NPA }}</td>
+                <td><a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPA ~ '-' ~ row.COCodeNXX}) }}">{{ row.COCodeNXX }}</a></td>
+                <td>{{ row.ExchangeArea }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endblock %}

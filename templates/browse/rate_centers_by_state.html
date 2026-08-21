@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Rate Centers in {{ state }}</h2>
+    <div class="pill-list">
+        {% for rc in rate_centers %}
+            <a href="{{ url_for('browse.rate_center_detail', rc=rc, state=state, country='US') }}">{{ rc }}</a>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
