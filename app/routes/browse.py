@@ -2,7 +2,7 @@ from fastapi import APIRouter, Query, Request
 
 from app.constants import CANADA_PT, STATES, US_STATE_QUERY_ALIASES, US_TERRITORIES
 from app.database import fetch_all
-from app.maps import canada_map_for_location, country_map_for_location, territory_map_for_code, us_state_map_images
+from app.maps import canada_map_images, country_map_for_location, territory_map_for_code, us_state_map_images
 from app.templating import render
 
 router = APIRouter()
@@ -191,7 +191,7 @@ def area_code_maps(request: Request, state: str = Query("")):
                 "title": state.title(),
                 "state_code": CANADA_PT[state],
                 "npas": npas,
-                "map_file": canada_map_for_location(state),
+                "map_images": canada_map_images(state),
             },
         )
 

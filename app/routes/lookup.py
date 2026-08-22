@@ -9,7 +9,7 @@ from app.constants import (
 )
 from app.database import fetch_all, fetch_one, row_to_dict
 from app.maps import (
-    canada_map_for_location,
+    canada_map_images,
     country_map_for_location,
     territory_map_for_code,
     us_state_map_images,
@@ -97,7 +97,7 @@ def area_codes(request: Request, npa: str = Query("", min_length=0)):
                 "province_name": location,
                 "province_abbr": province_abbr,
                 "office_codes_by_status": office_codes_by_status,
-                "map_file": canada_map_for_location(location),
+                "map_images": canada_map_images(location),
             },
         )
 
@@ -190,6 +190,6 @@ def office_codes(request: Request, npa_nxx: str = Query("", alias="npa-nxx")):
             "exchange_area": ca_row["ExchangeArea"],
             "ocn": ca_row["OCN"],
             "company": ca_row["Company"],
-            "map_file": canada_map_for_location(ac_row["LOCATION"]),
+            "map_images": canada_map_images(ac_row["LOCATION"]),
         },
     )

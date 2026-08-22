@@ -51,6 +51,15 @@ def canada_map_for_location(location: str) -> str:
     return CANADA_MAPS.get(location, "")
 
 
+def canada_map_images(location: str = "") -> list[str]:
+    images = []
+    province_map = canada_map_for_location(location)
+    if province_map:
+        images.append(province_map)
+    images.extend(["canada.png", "canadapt.png"])
+    return images
+
+
 def territory_map_for_code(code: str) -> str:
     return TERRITORY_MAPS.get(code, "")
 

@@ -2,28 +2,48 @@
 {% block content %}
 <section class="card">
     <h2>Area Code List</h2>
+    <p class="meta">All area codes sorted by NPA, grouped by assignment status.</p>
+</section>
+
+<section class="card">
     <h3>Assigned</h3>
-    {% for item in assigned %}
-        <p>
-            <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
-            — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
-        </p>
-    {% endfor %}
+    {% if assigned %}
+        {% for item in assigned %}
+            <p>
+                <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
+                — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>No assigned area codes.</p>
+    {% endif %}
+</section>
 
+<section class="card">
     <h3>Reserved</h3>
-    {% for item in reserved %}
-        <p>
-            <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
-            — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
-        </p>
-    {% endfor %}
+    {% if reserved %}
+        {% for item in reserved %}
+            <p>
+                <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
+                — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>No reserved area codes.</p>
+    {% endif %}
+</section>
 
+<section class="card">
     <h3>Unassigned and Not Reserved</h3>
-    {% for item in unassigned %}
-        <p>
-            <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
-            — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
-        </p>
-    {% endfor %}
+    {% if unassigned %}
+        {% for item in unassigned %}
+            <p>
+                <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
+                — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
+            </p>
+        {% endfor %}
+    {% else %}
+        <p>No unassigned area codes.</p>
+    {% endif %}
 </section>
 {% endblock %}

@@ -27,9 +27,11 @@
     </dl>
 </section>
 
-{% if map_file %}
 <section class="card maps">
-    <img src="{{ url_for('static', filename='CanadaACMaps/' ~ map_file) }}" alt="Canada map">
+    <h3>Maps</h3>
+    {% set canada_maps = map_images if map_images is defined else (([map_file] if map_file is defined and map_file else []) + ['canada.png', 'canadapt.png']) %}
+    {% for map_file in canada_maps %}
+        <img src="{{ url_for('static', filename='CanadaACMaps/' ~ map_file) }}" alt="Canada map">
+    {% endfor %}
 </section>
-{% endif %}
 {% endblock %}
