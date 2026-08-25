@@ -78,6 +78,10 @@ Force download and rebuild regardless of file age:
 .venv\Scripts\python.exe run.py
 ```
 
+Or double-click [`start_nanpa2.bat`](start_nanpa2.bat) in the project folder. It starts the server, keeps the command window open, and waits for **Ctrl+C** to stop. If the app exits with an error, the window stays open so you can read the message.
+
+To launch from the Desktop, create a shortcut to `start_nanpa2.bat` (**Send to → Desktop (create shortcut)**). Do not copy the bat file itself to the Desktop, because it needs to run from the project folder where `.venv` lives.
+
 Or with Uvicorn directly:
 
 ```powershell
@@ -87,6 +91,29 @@ Or with Uvicorn directly:
 Open: http://127.0.0.1:5000
 
 Set `FLASK_DEBUG=1` to enable auto-reload during development.
+
+### Port already in use
+
+If port 5000 is busy, check what is using it in PowerShell:
+
+```powershell
+Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue | ForEach-Object {
+    Get-Process -Id $_.OwningProcess
+}
+```
+
+Stop the listener:
+
+```powershell
+Get-NetTCPConnection -LocalPort 5000 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+```
+
+Or run on another port:
+
+```powershell
+$env:NANPA_PORT=5001
+.venv\Scripts\python.exe run.py
+```
 
 ## Environment variables
 
@@ -123,6 +150,7 @@ nanpa2/
   .vscode/
     settings.json        # Local Python interpreter path
   run.py
+  start_nanpa2.bat     # Double-click Windows launcher
   refresh_data.py
   requirements.txt
 ```
