@@ -85,19 +85,19 @@ To launch from the Desktop, create a shortcut to `start_nanpa2.bat` (**Send to â
 Or with Uvicorn directly:
 
 ```powershell
-.venv\Scripts\uvicorn.exe run:app --host 127.0.0.1 --port 5000
+.venv\Scripts\uvicorn.exe run:app --host 127.0.0.1 --port 8002
 ```
 
-Open: http://127.0.0.1:5000
+Open: http://127.0.0.1:8002
 
 Set `FLASK_DEBUG=1` to enable auto-reload during development.
 
 ### Port already in use
 
-If port 5000 is busy, check what is using it in PowerShell:
+If port 8002 is busy, check what is using it in PowerShell:
 
 ```powershell
-Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue | ForEach-Object {
+Get-NetTCPConnection -LocalPort 8002 -State Listen -ErrorAction SilentlyContinue | ForEach-Object {
     Get-Process -Id $_.OwningProcess
 }
 ```
@@ -105,13 +105,13 @@ Get-NetTCPConnection -LocalPort 5000 -State Listen -ErrorAction SilentlyContinue
 Stop the listener:
 
 ```powershell
-Get-NetTCPConnection -LocalPort 5000 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
+Get-NetTCPConnection -LocalPort 8002 -State Listen | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force }
 ```
 
 Or run on another port:
 
 ```powershell
-$env:NANPA_PORT=5001
+$env:NANPA_PORT=8003
 .venv\Scripts\python.exe run.py
 ```
 
@@ -120,7 +120,7 @@ $env:NANPA_PORT=5001
 | Variable | Default | Purpose |
 |----------|---------|---------|
 | `NANPA_HOST` | `127.0.0.1` | Server host |
-| `NANPA_PORT` | `5000` | Server port |
+| `NANPA_PORT` | `8002` | Server port |
 | `FLASK_DEBUG` | `0` | Enable Uvicorn auto-reload |
 | `NANPA_REFRESH_ON_START` | `0` | Force download and rebuild at startup |
 | `NANPA_DB_MAX_AGE_DAYS` | `7` | Max age for source files and database before refresh |

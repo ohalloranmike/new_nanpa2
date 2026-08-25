@@ -11,7 +11,7 @@ if not exist ".venv\Scripts\python.exe" (
 )
 
 echo Starting NANPA2...
-echo Open: http://127.0.0.1:5000
+echo Open: http://127.0.0.1:8002
 echo Press Ctrl+C to stop the server.
 echo.
 

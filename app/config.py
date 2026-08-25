@@ -10,7 +10,7 @@ class Config:
     DB_PATH = NANPA_DIR / "pn.db"
 
     HOST = os.environ.get("NANPA_HOST", "127.0.0.1")
-    PORT = int(os.environ.get("NANPA_PORT", "5000"))
+    PORT = int(os.environ.get("NANPA_PORT", "8002"))
     DEBUG = os.environ.get("FLASK_DEBUG", "0") == "1"
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-change-me")
 
