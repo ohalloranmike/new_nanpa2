@@ -1,27 +1,53 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="basic">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}NANPA Info{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}">
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem("nanpa2-ui-theme") || "basic";
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    theme === "nanpa" ? "nanpa" : "basic"
+                );
+            } catch (error) {
+                document.documentElement.setAttribute("data-theme", "basic");
+            }
+        })();
+    </script>
 </head>
 <body>
 <header class="site-header">
-    <div class="container brand">
-        <img src="{{ url_for('static', filename='phone.jpg') }}" alt="Phone icon">
-        <div>
-            <h1>{{ page_header or "NANPA Numbering Plan Explorer" }}</h1>
-            <p>Public data from <a href="https://nanpa.com" target="_blank" rel="noopener">nanpa.com</a> and
-                <a href="https://www.cnac.ca" target="_blank" rel="noopener">cnac.ca</a></p>
+    <div class="header-top">
+        <div class="container header-top-inner">
+            <div class="brand">
+                <img src="{{ url_for('static', filename='phone.jpg') }}" alt="Phone icon">
+                <div>
+                    <h1>{{ page_header or "NANPA Numbering Plan Explorer" }}</h1>
+                    <p>Public data from <a href="https://nanpa.com" target="_blank" rel="noopener">nanpa.com</a> and
+                        <a href="https://www.cnac.ca" target="_blank" rel="noopener">cnac.ca</a></p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <label class="theme-select-label" for="theme-select">Theme</label>
+                <select id="theme-select" class="theme-select" aria-label="Theme">
+                    <option value="basic">Basic</option>
+                    <option value="nanpa">NANPA</option>
+                </select>
+            </div>
         </div>
     </div>
-    <div class="container nav">
-        <a href="{{ url_for('home.index') }}">Home</a>
-        <a href="{{ url_for('lists.area_code_list') }}">Area Code List</a>
-        <a href="{{ url_for('lists.special_service_numbers') }}">Special Service Numbers</a>
-        <a href="{{ url_for('ocn.ocn_all') }}">US Operating Companies</a>
-        <a href="{{ url_for('ocn.canada_ocn_all', sort='company') }}">Canada OCN List</a>
+    <div class="header-nav">
+        <div class="container nav">
+            <a href="{{ url_for('home.index') }}">Home</a>
+            <a href="{{ url_for('lists.area_code_list') }}">Area Code List</a>
+            <a href="{{ url_for('lists.special_service_numbers') }}">Special Service Numbers</a>
+            <a href="{{ url_for('ocn.ocn_all') }}">US Operating Companies</a>
+            <a href="{{ url_for('ocn.canada_ocn_all', sort='company') }}">Canada OCN List</a>
+        </div>
     </div>
 </header>
 
@@ -35,5 +61,6 @@
         <p>API by Mike O'Halloran · <a href="mailto:ohalloranmike@outlook.com">ohalloranmike@outlook.com</a></p>
     </div>
 </footer>
+<script src="{{ url_for('static', filename='js/theme.js') }}"></script>
 </body>
 </html>

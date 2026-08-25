@@ -13,7 +13,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Automatic refresh of stale NANPA/CNAC source files and SQLite database
 - Home page shows current data date with a live progress update window
 - Separate data refresh command (`refresh_data.py`)
-- Responsive UI with shared CSS
+- Responsive UI with shared CSS and selectable themes (**Basic** or **NANPA**)
 - Feature parity with original app routes
 
 ## Requirements
@@ -92,6 +92,15 @@ Open: http://127.0.0.1:8002
 
 Set `FLASK_DEBUG=1` to enable auto-reload during development.
 
+### Themes
+
+Use the **Theme** dropdown in the page header to switch between:
+
+- **Basic** — the default light layout with rounded cards and soft blue accents
+- **NANPA** — a look inspired by [nanpa.com](https://www.nanpa.com): navy top bar, blue navigation band, white content area, and dark footer
+
+Your choice is saved in the browser (`localStorage` key `nanpa2-ui-theme`) and applied on every page load.
+
 ### Port already in use
 
 If port 8002 is busy, check what is using it in PowerShell:
@@ -146,6 +155,8 @@ nanpa2/
     refresh_data.html    # Live update progress page
   static/
     css/
+    js/
+      theme.js           # Theme selector and localStorage persistence
     NANPA/               # Downloaded data and generated pn.db (mostly gitignored)
   .vscode/
     settings.json        # Local Python interpreter path
