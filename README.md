@@ -99,7 +99,11 @@ Use the **Theme** dropdown in the page header to switch between:
 - **Basic** — the default light layout with rounded cards and soft blue accents
 - **NANPA** — a look inspired by [nanpa.com](https://www.nanpa.com): navy top bar, blue navigation band, white content area, and dark footer
 
-Your choice is saved in the browser (`localStorage` key `nanpa2-ui-theme`) and applied on every page load.
+Your choice is saved in the browser (`localStorage` key `nanpa2-ui-theme`) and applied before the page paints, matching the ZoomAPI_Tools pattern. Theme switching logic lives inline in `templates/base.html` (no separate JavaScript file).
+
+HTML and static assets are sent with `Cache-Control: no-cache` so CSS updates apply reliably after a normal refresh. If styles still look stale, hard refresh once with **Ctrl+F5**.
+
+On the **NANPA** theme, the theme dropdown uses a navy control with white text; open options use a white background and dark text for readability.
 
 ### Port already in use
 
@@ -152,11 +156,10 @@ nanpa2/
       home.py            # Home page and refresh UI routes
       refresh_stream.py  # SSE progress stream for data updates
   templates/
+    base.html            # Shared layout, theme selector, and inline theme JS
     refresh_data.html    # Live update progress page
   static/
     css/
-    js/
-      theme.js           # Theme selector and localStorage persistence
     NANPA/               # Downloaded data and generated pn.db (mostly gitignored)
   .vscode/
     settings.json        # Local Python interpreter path

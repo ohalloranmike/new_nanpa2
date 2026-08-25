@@ -2,6 +2,7 @@ from contextlib import asynccontextmanager
 
 import sqlite3
 from fastapi import FastAPI, Request
+from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.staticfiles import StaticFiles
 
 from app.config import Config
@@ -25,6 +26,16 @@ def create_app(config_class=Config) -> FastAPI:
 
     app = FastAPI(title="NANPA Numbering Plan Explorer", lifespan=lifespan)
     init_templates(config.TEMPLATE_DIR)
+
+    class NoCacheStaticMiddleware(BaseHTTPMiddleware):
+        async def dispatch(self, request: Request, call_next):
+            response = await call_next(request)
+            path = request.url.path
+            if path.startswith(("/css/", "/js/")) or path.endswith((".css", ".js")):
+                response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+            return response
+
+    app.add_middleware(NoCacheStaticMiddleware)
 
     @app.middleware("http")
     async def db_middleware(request: Request, call_next):

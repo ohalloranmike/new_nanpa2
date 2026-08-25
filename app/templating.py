@@ -34,4 +34,9 @@ def render(request: Request, name: str, context: dict | None = None, status_code
     ctx["request"] = request
     ctx["db_last_updated"] = request.app.state.db_last_updated
     ctx["url_for"] = make_url_for(request)
-    return templates.TemplateResponse(name, ctx, status_code=status_code)
+    return templates.TemplateResponse(
+        name,
+        ctx,
+        status_code=status_code,
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate"},
+    )
