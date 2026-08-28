@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}NANPA Info{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?v=4">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?v=5">
     <script>
         (function () {
             var THEME_STORAGE_KEY = "nanpa2-ui-theme";
@@ -83,6 +83,9 @@
 <script>
     (function () {
         function initTheme() {
+            var theme = document.documentElement.getAttribute("data-theme") || "basic";
+            window.nanpa2SetTheme(theme, false);
+
             var select = document.getElementById("theme-select");
             if (select) {
                 select.addEventListener("change", function (event) {
