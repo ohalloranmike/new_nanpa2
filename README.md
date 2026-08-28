@@ -78,7 +78,7 @@ Force download and rebuild regardless of file age:
 .venv\Scripts\python.exe run.py
 ```
 
-Or double-click [`start_nanpa2.bat`](start_nanpa2.bat) in the project folder. It starts the server, keeps the command window open, and waits for **Ctrl+C** to stop. If the app exits with an error, the window stays open so you can read the message.
+Or double-click [`start_nanpa2.bat`](start_nanpa2.bat) in the project folder. It reads `NANPA_HOST` and `NANPA_PORT` from config, stops any process already listening on that port, then starts the server. The command window stays open and waits for **Ctrl+C** to stop. If the app exits with an error, the window stays open so you can read the message.
 
 To launch from the Desktop, create a shortcut to `start_nanpa2.bat` (**Send to → Desktop (create shortcut)**). Do not copy the bat file itself to the Desktop, because it needs to run from the project folder where `.venv` lives.
 
@@ -107,7 +107,7 @@ On the **NANPA** theme, the theme dropdown uses a navy control with white text; 
 
 ### Port already in use
 
-If port 8002 is busy, check what is using it in PowerShell:
+`start_nanpa2.bat` stops any process listening on the configured port before launch (same approach as Zoom_Dashboard). To check manually in PowerShell:
 
 ```powershell
 Get-NetTCPConnection -LocalPort 8002 -State Listen -ErrorAction SilentlyContinue | ForEach-Object {
