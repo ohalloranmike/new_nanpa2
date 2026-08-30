@@ -4,45 +4,6 @@
   --transition: 0.2s ease;
 }
 
-html[data-theme="basic"] {
-  --bg: #f4f7fb;
-  --surface: #ffffff;
-  --text: #1f2937;
-  --muted: #6b7280;
-  --primary: #1e4f91;
-  --primary-dark: #163a6b;
-  --border: #d8dee9;
-  --accent: #eef4ff;
-  --danger: #b42318;
-  --success: #166534;
-  --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
-  --body-bg: linear-gradient(180deg, #eef3fa 0%, #f4f7fb 220px);
-  --header-top-bg: #ffffff;
-  --header-nav-bg: #ffffff;
-  --header-top-text: #163a6b;
-  --header-top-muted: #6b7280;
-  --header-top-link: #1e4f91;
-  --header-nav-link: #1e4f91;
-  --header-nav-link-hover-bg: transparent;
-  --header-nav-border: #d8dee9;
-  --header-accent-border: transparent;
-  --footer-bg: #ffffff;
-  --footer-text: #1f2937;
-  --footer-link: #1e4f91;
-  --footer-muted: #6b7280;
-  --btn-bg: #1e4f91;
-  --btn-hover-bg: #163a6b;
-  --btn-fg: #ffffff;
-  --input-bg: #ffffff;
-  --table-stripe: #fafbfd;
-  --progress-fill: linear-gradient(90deg, #1e4f91, #2f6fb8);
-  --theme-select-bg: #ffffff;
-  --theme-select-fg: #1f2937;
-  --theme-select-border: #d8dee9;
-  --theme-label: #6b7280;
-  --font-body: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-}
-
 html[data-theme="nanpa"] {
   --bg: #ffffff;
   --surface: #ffffff;
@@ -83,6 +44,50 @@ html[data-theme="nanpa"] {
   --theme-label: #e7e7e7;
   --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
   --max-width: 1140px;
+  --radius: 4px;
+}
+
+html[data-theme="nike"] {
+  --bg: #161616;
+  --surface: #161616;
+  --text: #ffffff;
+  --muted: #757575;
+  --primary: #fa5400;
+  --primary-dark: #fa5400;
+  --border: #343434;
+  --accent: rgba(250, 84, 0, 0.1);
+  --danger: #ff4444;
+  --success: #00c853;
+  --shadow: none;
+  --body-bg: #000000;
+  --header-top-bg: #111111;
+  --header-nav-bg: #111111;
+  --header-top-text: #ffffff;
+  --header-top-muted: #757575;
+  --header-top-link: #fa5400;
+  --header-nav-link: #ffffff;
+  --header-nav-link-hover-bg: #424242;
+  --header-nav-border: #424242;
+  --header-accent-border: #fa5400;
+  --footer-bg: #111111;
+  --footer-text: #ffffff;
+  --footer-link: #fa5400;
+  --footer-muted: #757575;
+  --btn-bg: #ffffff;
+  --btn-hover-bg: #f5f5f5;
+  --btn-fg: #000000;
+  --input-bg: #000000;
+  --table-stripe: rgba(255, 255, 255, 0.04);
+  --progress-fill: linear-gradient(90deg, #fa5400, #e04d00);
+  --theme-select-bg: #000000;
+  --theme-select-fg: #ffffff;
+  --theme-select-border: #424242;
+  --theme-select-option-bg: #161616;
+  --theme-select-option-fg: #ffffff;
+  --theme-label: #757575;
+  --font-body: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Oswald", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --max-width: 1200px;
   --radius: 4px;
 }
 
@@ -153,6 +158,22 @@ a:hover {
   height: auto;
 }
 
+.brand-icon--nike {
+  display: none;
+  width: 56px;
+  height: auto;
+  aspect-ratio: 69 / 32;
+  color: var(--primary);
+}
+
+html[data-theme="nike"] .brand-icon--photo {
+  display: none;
+}
+
+html[data-theme="nike"] .brand-icon--nike {
+  display: block;
+}
+
 .brand h1 {
   margin: 0;
   font-size: 1.35rem;
@@ -216,6 +237,64 @@ html[data-theme="nanpa"] .theme-select option {
   color: #3b3b3b;
 }
 
+html[data-theme="nike"] .brand h1 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+html[data-theme="nike"] .theme-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+html[data-theme="nike"] .card {
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+html[data-theme="nike"] .card:hover {
+  border-color: #4a4a4a;
+  transform: translateY(-2px);
+}
+
+html[data-theme="nike"] .card h2,
+html[data-theme="nike"] .card h3 {
+  color: #ffffff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+html[data-theme="nike"] .pill-list a {
+  color: #ffffff;
+  border-color: rgba(250, 84, 0, 0.45);
+}
+
+html[data-theme="nike"] .pill-list a:hover {
+  border-color: #fa5400;
+  text-decoration: none;
+}
+
+html[data-theme="nike"] .list-links a {
+  color: #ffffff;
+}
+
+html[data-theme="nike"] input[type="text"]:focus,
+html[data-theme="nike"] select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+html[data-theme="nike"] .data-table th {
+  color: #ffffff;
+}
+
+html[data-theme="nike"] .progress-percent {
+  color: #ffffff;
+}
+
 .nav {
   display: flex;
   flex-wrap: wrap;
@@ -237,24 +316,47 @@ html[data-theme="nanpa"] .theme-select option {
   background: var(--header-nav-link-hover-bg);
 }
 
-html[data-theme="basic"] .nav a:hover {
-  text-decoration: underline;
-}
-
 .meta {
   color: var(--muted);
   font-size: 0.9rem;
 }
 
-main {
+main,
+.site-main {
   padding: 1.5rem 0 2rem;
 }
 
-html[data-theme="nanpa"] main {
-  background: var(--surface);
+html[data-theme="nanpa"] body {
+  background: #292929;
+  color: #3b3b3b;
+}
+
+html[data-theme="nanpa"] .site-main {
+  background: #ffffff;
+  width: 100%;
+  max-width: none;
   margin-top: 0;
   padding-top: 1.5rem;
   padding-bottom: 2rem;
+}
+
+html[data-theme="nanpa"] .site-main .card {
+  background: #ffffff;
+  color: #3b3b3b;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="nanpa"] .site-main .card h2,
+html[data-theme="nanpa"] .site-main .card h3 {
+  color: #055a8e;
+}
+
+html[data-theme="nanpa"] .site-main .meta {
+  color: #666666;
+}
+
+html[data-theme="nanpa"] .site-main a {
+  color: #0071b3;
 }
 
 .site-footer {
@@ -267,6 +369,15 @@ html[data-theme="nanpa"] main {
 html[data-theme="nanpa"] .site-footer {
   margin-top: 0;
   border-top: 0;
+}
+
+html[data-theme="nike"] .site-header {
+  box-shadow: none;
+}
+
+html[data-theme="nike"] .site-footer {
+  margin-top: 0;
+  border-top: 1px solid var(--border);
 }
 
 .site-footer a {

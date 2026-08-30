@@ -13,7 +13,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Automatic refresh of stale NANPA/CNAC source files and SQLite database
 - Home page shows current data date with a live progress update window
 - Separate data refresh command (`refresh_data.py`)
-- Responsive UI with shared CSS and selectable themes (**Basic** or **NANPA**)
+- Responsive UI with shared CSS and selectable themes (**NANPA** or **Nike**)
 - International E.164 country overview with dialling metadata and libphonenumber validation
 - Feature parity with original app routes
 
@@ -106,14 +106,16 @@ Set `FLASK_DEBUG=1` to enable auto-reload during development.
 
 Use the **Theme** dropdown in the page header to switch between:
 
-- **Basic** — the default light layout with rounded cards and soft blue accents
-- **NANPA** — a look inspired by [nanpa.com](https://www.nanpa.com): navy top bar, blue navigation band, white content area, and dark footer
+- **NANPA** (default) — inspired by [nanpa.com](https://www.nanpa.com): navy top bar, blue navigation band, white content area, and dark footer
+- **Nike** — matches the [ZoomAPI_Tools](https://github.com/mohal2_nike/ZoomAPI_Tools) Nike theme: black background, orange accents, uppercase Oswald headings, and the Nike swoosh in the header
 
 Your choice is saved in the browser (`localStorage` key `nanpa2-ui-theme`) and applied before the page paints, matching the ZoomAPI_Tools pattern. Theme switching logic lives inline in `templates/base.html` (no separate JavaScript file).
 
 HTML and static assets are sent with `Cache-Control: no-cache` so CSS updates apply reliably after a normal refresh. If styles still look stale, hard refresh once with **Ctrl+F5**.
 
 On the **NANPA** theme, the theme dropdown uses a navy control with white text; open options use a white background and dark text for readability.
+
+On the **Nike** theme, the header shows the orange Nike swoosh, dark cards, and orange focus/hover accents on links and form controls.
 
 ### Port already in use
 
