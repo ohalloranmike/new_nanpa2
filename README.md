@@ -36,20 +36,11 @@ Cursor/VS Code will use the local interpreter from `.vscode/settings.json`.
 
 ## Data refresh
 
-The app downloads public NANPA and CNAC files, international dialling metadata, and builds `static/NANPA/pn.db`.
+The app downloads public NANPA and CNAC files, international dialling metadata, and builds `static/NANPA/pn.db`. See [Data sources](#data-sources) below for every dataset, its URL, local path, and what it powers in the app.
 
 ### Automatic refresh
 
-On startup, the app checks:
-
-1. **Source files** in `static/NANPA/`:
-   - `npa_report.csv`
-   - `CoCodeAssignment_Utilized_AllStates_Public.txt`
-   - `COCodeStatus_ALL.csv`
-   - `international_countries.json` (open dialling dataset, ITU-aligned)
-2. **SQLite database**: `static/NANPA/pn.db`
-
-If any source file is missing or older than 7 days, new files are downloaded and the database is rebuilt. If source files are still fresh but the database is missing or stale, the database is rebuilt from the existing files without re-downloading.
+On startup, the app checks whether downloaded source files in `static/NANPA/` and the SQLite database `static/NANPA/pn.db` are missing or older than 7 days. If so, it re-downloads stale files and rebuilds the database.
 
 Set `NANPA_REFRESH_ON_START=1` to force a full download and rebuild on every launch.
 
@@ -61,7 +52,7 @@ The home page shows the current database date and an **Update data now** button.
 - The current step (download, extract, SQLite load, index build)
 - A scrollable log of completed steps
 
-Progress is streamed live from `/refresh-data/stream` using Server-Sent Events while NANPA and CNAC files are downloaded, international dialling data is fetched, and the SQLite database is rebuilt.
+Progress is streamed live from `/refresh-data/stream` using Server-Sent Events while source files are downloaded and the SQLite database is rebuilt.
 
 ### International numbering (Plan A)
 
@@ -77,7 +68,7 @@ Features:
 - US and Canada link back to existing NANP area code and office code detail
 - Filter by continent or search by country name, ISO code, or calling code
 
-Dialling fields come from the open [VoixCall country-calling-codes](https://github.com/VoixCall/country-calling-codes) dataset. Official ITU references are listed on the international pages. This is not exchange-level numbering data — only a trustworthy country overview layer.
+This is not exchange-level numbering data — only a trustworthy country overview layer. See [Data sources](#data-sources) for the exact datasets and URLs.
 
 ### Manual refresh
 
@@ -157,7 +148,7 @@ $env:NANPA_PORT=8003
 | `NANPA_REFRESH_ON_START` | `0` | Force download and rebuild at startup |
 | `NANPA_DB_MAX_AGE_DAYS` | `7` | Max age for source files and database before refresh |
 | `NANPA_REQUESTS_VERIFY` | `0` | TLS certificate verification for downloads |
-| `NANPA_INTERNATIONAL_DATA_URL` | VoixCall GitHub JSON | International dialling dataset URL |
+| `NANPA_INTERNATIONAL_DATA_URL` | `https://raw.githubusercontent.com/VoixCall/country-calling-codes/main/data/countries.json` | International dialling dataset URL |
 | `SECRET_KEY` | `dev-change-me` | App secret key |
 
 ## Project layout
@@ -192,6 +183,57 @@ nanpa2/
   refresh_data.py
   requirements.txt
 ```
+
+## Data sources
+
+All downloaded files land under `static/NANPA/` and are gitignored except bundled reference CSVs. The app rebuilds `static/NANPA/pn.db` from the downloaded files on refresh.
+
+### Downloaded on refresh (NANPA / CNAC / international)
+
+| Local file | Source URL | What you get | Used for |
+|------------|------------|--------------|----------|
+| `npa_report.csv` | [NANPA NPA report](https://reports.nanpa.com/public/npa_report.csv) | US area code (NPA) assignments: location, in-service date, overlays, pooling, and related NANPA fields | Area code lookup, browse-by-state maps, area code list |
+| `CoCodeAssignment_Utilized_AllStates_Public.txt` (from zip) | [NANPA office code zip](https://reports.nanpa.com/public/CoCodeAssignment_Utilized_AllStates_Public.zip) | US office code (NPA-NXX) assignments: OCN, operating company, rate center, state, assignment status | Office code lookup, rate centers, company detail, OCN index |
+| `COCodeStatus_ALL.csv` (from zip) | [CNAC office code zip](https://www.cnac.ca/data/COCodeStatus_ALL.zip) | Canada office code assignments: province, exchange area, OCN, company, NPA, CO code | Canada office code lookup, rate centers, company detail |
+| `international_countries.json` | [VoixCall countries JSON](https://raw.githubusercontent.com/VoixCall/country-calling-codes/main/data/countries.json) (override with `NANPA_INTERNATIONAL_DATA_URL`) | Per-country ISO code, name, E.164 calling code, continent, international exit code, trunk/mobile/landline prefixes, example numbers, international format | International country list and detail pages (`intl_country` table) |
+
+**Derived SQLite tables** (built during refresh, not downloaded directly):
+
+| Table | Built from | What you get |
+|-------|------------|--------------|
+| `ac` | `npa_report.csv` | US area code records |
+| `oc` | US office code text file | US office code records |
+| `caoc` | `COCodeStatus_ALL.csv` | Canada office code records |
+| `ocn` | `oc` | Distinct US operating companies (OCN + company name) |
+| `intl_country` | `international_countries.json` + enrichments below | International country overview records |
+
+### Runtime library metadata (not downloaded)
+
+| Source | What you get | Used for |
+|--------|--------------|----------|
+| [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers) (Google [libphonenumber](https://github.com/google/libphonenumber) metadata bundled in the package) | National number length ranges, example numbers, parse/validate rules | International country detail (`national_length_min` / `max`, `lib_example`) and per-country phone validation on `/international/{iso2}?phone=...` |
+
+### Curated in code (not downloaded)
+
+| Source | What you get | Used for |
+|--------|--------------|----------|
+| `app/international_regulators.py` → `REGULATORS` | National regulator name and website for selected countries (e.g. NANPA, CNAC, Ofcom, ARCEP) | Regulator links on international country pages |
+| `app/international_regulators.py` → `ITU_REFERENCES` | ITU-T E.164 and dialling procedure references | Official reference links on international pages |
+
+### Bundled static files (shipped with the repo)
+
+| Local path | What you get | Used for |
+|------------|--------------|----------|
+| `static/NANPA/special_service_numbers.csv` | Reserved extensions (911, 988, 112, etc.) by country/region | Special Service Numbers list |
+| `static/NANPA/N11-Codes.csv` | N11 short-code definitions (211, 311, 411, …) | N11 codes list |
+| `static/NANPA/900codes.csv` | 900-series NXX assignments and entities | 900 codes list |
+| `static/USACMaps/` | US state area-code map GIFs | US area code and office code pages |
+| `static/USStateMaps/` | US state outline PNGs | US area code and office code pages |
+| `static/USTerritoryACMaps/` | US territory area-code maps | Territory browse and lookup |
+| `static/CanadaACMaps/` | Canada province/territory area-code maps | Canada area code pages |
+| `static/CountryACMaps/` | Caribbean and other NANP country maps | Country browse pages (Jamaica, Bahamas, etc.) |
+
+Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `OfficeCodeDatabaseDefinitions.csv`, `FGD-CIC.csv`, `FGB-CIC.csv`) are legacy reference material from the original app and are not loaded by current routes.
 
 ## Notes
 
