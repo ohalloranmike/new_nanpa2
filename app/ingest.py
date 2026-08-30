@@ -11,6 +11,7 @@ import requests
 
 from app.config import Config
 from app.database import db_connection
+from app.international import download_international_data, international_source_path, load_international_countries
 
 ProgressCallback = Callable[[str, str, int], None]
 
@@ -78,6 +79,9 @@ def _create_indexes(conn) -> None:
         "CREATE INDEX IF NOT EXISTS idx_caoc_ocn ON caoc(OCN)",
         "CREATE INDEX IF NOT EXISTS idx_caoc_exchange ON caoc(ExchangeArea)",
         "CREATE INDEX IF NOT EXISTS idx_caoc_province ON caoc(Province)",
+        "CREATE INDEX IF NOT EXISTS idx_intl_dial_code ON intl_country(dial_code)",
+        "CREATE INDEX IF NOT EXISTS idx_intl_continent ON intl_country(continent)",
+        "CREATE INDEX IF NOT EXISTS idx_intl_name ON intl_country(name)",
     ]
     for statement in indexes:
         try:
@@ -92,6 +96,7 @@ def _source_files(config: Config) -> list[Path]:
         nanpa_dir / "npa_report.csv",
         nanpa_dir / "CoCodeAssignment_Utilized_AllStates_Public.txt",
         nanpa_dir / "COCodeStatus_ALL.csv",
+        nanpa_dir / "international_countries.json",
     ]
 
 
@@ -148,6 +153,9 @@ def _download_sources(config: Config, progress: ProgressCallback | None = None) 
     with ZipFile(ca_oc_zip, "r") as archive:
         archive.extractall(config.NANPA_DIR)
 
+    _report(progress, "download_intl", "Downloading international dialling data...", 62)
+    download_international_data(config, verify)
+
 
 def _rebuild_database(config: Config, progress: ProgressCallback | None = None) -> None:
     npa_csv = config.NANPA_DIR / "npa_report.csv"
@@ -166,6 +174,12 @@ def _rebuild_database(config: Config, progress: ProgressCallback | None = None) 
 
         _report(progress, "load_ocn", "Building operating company index...", 94)
         _load_ocn_table(conn)
+
+        _report(progress, "load_intl", "Loading international country data...", 96)
+        intl_path = international_source_path(config)
+        if not intl_path.exists():
+            download_international_data(config, config.REQUESTS_VERIFY)
+        load_international_countries(conn, intl_path)
 
         _report(progress, "indexes", "Creating database indexes...", 97)
         _create_indexes(conn)

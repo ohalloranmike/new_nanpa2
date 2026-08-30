@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block title %}{{ country.name }} — International Numbering{% endblock %}
+
+{% block content %}
+<section class="card">
+    <p><a href="{{ url_for('international.index') }}">&larr; All international countries</a></p>
+    <h2>{{ country.name }}</h2>
+    <p class="meta">ISO {{ country.iso2 }} · {{ country.continent or "Region unknown" }}</p>
+</section>
+
+{% if country.nanp_linked %}
+<section class="card">
+    <h3>North American Numbering Plan</h3>
+    <p>
+        {{ country.name }} uses country code <strong>+{{ country.dial_code }}</strong> under the NANP.
+        This app already provides detailed area code and office code data for
+        {% if country.iso2 == 'US' %}
+            the <a href="{{ url_for('home.index') }}">United States</a>.
+        {% elif country.iso2 == 'CA' %}
+            <a href="{{ url_for('browse.area_code_maps', state='CANADA') }}">Canada</a>.
+        {% else %}
+            NANP members.
+        {% endif %}
+    </p>
+</section>
+{% endif %}
+
+<section class="card">
+    <h3>Dialling</h3>
+    <dl class="kv-grid">
+        <dt>Country calling code (E.164)</dt>
+        <dd>+{{ country.dial_code }}</dd>
+
+        <dt>International prefix (exit code)</dt>
+        <dd>{{ country.exit_code or "—" }}</dd>
+
+        <dt>National trunk prefix</dt>
+        <dd>{{ country.trunk_prefix or "—" }}</dd>
+
+        <dt>International format</dt>
+        <dd>{{ country.international_format or "—" }}</dd>
+
+        {% if country.national_length_min and country.national_length_max %}
+            <dt>National number length</dt>
+            <dd>
+                {% if country.national_length_min == country.national_length_max %}
+                    {{ country.national_length_min }} digits
+                {% else %}
+                    {{ country.national_length_min }}–{{ country.national_length_max }} digits
+                {% endif %}
+                <span class="meta">(libphonenumber)</span>
+            </dd>
+        {% endif %}
+    </dl>
+</section>
+
+<section class="card">
+    <h3>Prefixes and examples</h3>
+    <dl class="kv-grid">
+        <dt>Mobile prefixes</dt>
+        <dd>{{ country.mobile_prefix or "—" }}</dd>
+
+        <dt>Landline prefixes</dt>
+        <dd>{{ country.landline_prefix or "—" }}</dd>
+
+        <dt>Example mobile</dt>
+        <dd>{{ country.example_mobile or "—" }}</dd>
+
+        <dt>Example landline</dt>
+        <dd>{{ country.example_landline or "—" }}</dd>
+
+        {% if country.lib_example %}
+            <dt>libphonenumber example</dt>
+            <dd>{{ country.lib_example }}</dd>
+        {% endif %}
+    </dl>
+</section>
+
+{% if same_code_countries %}
+<section class="card">
+    <h3>Other +{{ country.dial_code }} countries</h3>
+    <div class="pill-list">
+        {% for other in same_code_countries %}
+            <a href="{{ url_for('international.country', iso2=other.iso2) }}">{{ other.name }}</a>
+        {% endfor %}
+    </div>
+</section>
+{% endif %}
+
+{% if country.regulator_url %}
+<section class="card">
+    <h3>National regulator</h3>
+    <p>
+        <a href="{{ country.regulator_url }}" target="_blank" rel="noopener">{{ country.regulator_name }}</a>
+    </p>
+</section>
+{% endif %}
+
+<section class="card">
+    <h3>Validate a number</h3>
+    <p class="meta">Uses libphonenumber rules for {{ country.iso2 }}. Syntax check only — does not verify the line is in service.</p>
+    <form method="get" action="{{ url_for('international.country', iso2=country.iso2) }}">
+        <label for="phone">Phone number</label>
+        <input id="phone" type="text" name="phone" value="{{ phone_query }}" placeholder="e.g. {{ country.example_mobile or country.lib_example or '+...' }}">
+        <button type="submit">Validate</button>
+    </form>
+    {% if validation %}
+        <p class="notice {% if validation.valid %}success{% elif validation.possible %}{% else %}error{% endif %}">
+            {{ validation.message }}
+        </p>
+        {% if validation.formatted %}
+            <dl class="kv-grid">
+                <dt>International</dt>
+                <dd>{{ validation.formatted }}</dd>
+                <dt>E.164</dt>
+                <dd>{{ validation.e164 }}</dd>
+                <dt>Type</dt>
+                <dd>{{ validation.type }}</dd>
+            </dl>
+        {% endif %}
+    {% endif %}
+</section>
+
+<section class="card">
+    <h3>Sources</h3>
+    <p class="meta">
+        {% for ref in itu_references %}
+            <a href="{{ ref.url }}" target="_blank" rel="noopener">{{ ref.name }}</a>{% if not loop.last %} · {% endif %}
+        {% endfor %}
+    </p>
+</section>
+{% endblock %}

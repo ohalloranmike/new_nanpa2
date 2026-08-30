@@ -22,6 +22,11 @@ class Config:
     NANPA_OC_ZIP_URL = "https://reports.nanpa.com/public/CoCodeAssignment_Utilized_AllStates_Public.zip"
     CNAC_OC_ZIP_URL = "https://www.cnac.ca/data/COCodeStatus_ALL.zip"
 
+    INTERNATIONAL_DATA_URL = os.environ.get(
+        "NANPA_INTERNATIONAL_DATA_URL",
+        "https://raw.githubusercontent.com/VoixCall/country-calling-codes/main/data/countries.json",
+    )
+
     USAC_MAP_URL = "/USACMaps/"
     STATE_MAP_URL = "/USStateMaps/"
     TERRITORY_MAP_URL = "/USTerritoryACMaps/"

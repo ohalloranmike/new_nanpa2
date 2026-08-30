@@ -14,12 +14,14 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Home page shows current data date with a live progress update window
 - Separate data refresh command (`refresh_data.py`)
 - Responsive UI with shared CSS and selectable themes (**Basic** or **NANPA**)
+- International E.164 country overview with dialling metadata and libphonenumber validation
 - Feature parity with original app routes
 
 ## Requirements
 
 - Python 3.12+ recommended
 - Windows: use the `py` launcher if `python` is not on PATH
+- Dependencies include [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers) for international number validation
 
 ## Setup
 
@@ -34,7 +36,7 @@ Cursor/VS Code will use the local interpreter from `.vscode/settings.json`.
 
 ## Data refresh
 
-The app downloads public NANPA and CNAC files and builds `static/NANPA/pn.db`.
+The app downloads public NANPA and CNAC files, international dialling metadata, and builds `static/NANPA/pn.db`.
 
 ### Automatic refresh
 
@@ -44,6 +46,7 @@ On startup, the app checks:
    - `npa_report.csv`
    - `CoCodeAssignment_Utilized_AllStates_Public.txt`
    - `COCodeStatus_ALL.csv`
+   - `international_countries.json` (open dialling dataset, ITU-aligned)
 2. **SQLite database**: `static/NANPA/pn.db`
 
 If any source file is missing or older than 7 days, new files are downloaded and the database is rebuilt. If source files are still fresh but the database is missing or stale, the database is rebuilt from the existing files without re-downloading.
@@ -58,7 +61,23 @@ The home page shows the current database date and an **Update data now** button.
 - The current step (download, extract, SQLite load, index build)
 - A scrollable log of completed steps
 
-Progress is streamed live from `/refresh-data/stream` using Server-Sent Events while NANPA and CNAC files are downloaded and the SQLite database is rebuilt.
+Progress is streamed live from `/refresh-data/stream` using Server-Sent Events while NANPA and CNAC files are downloaded, international dialling data is fetched, and the SQLite database is rebuilt.
+
+### International numbering (Plan A)
+
+Browse **International** in the nav, the **Browse international countries** link on the home page, or go to `/international` for country-level E.164 data. Country detail pages are at `/international/{iso2}` (for example `/international/FR`).
+
+Features:
+
+- Country calling codes, international exit codes, and trunk prefixes
+- Mobile/landline prefix hints and example formats
+- National number length ranges from [libphonenumber](https://github.com/google/libphonenumber)
+- Links to national regulators where curated (e.g. Ofcom, CNAC, NANPA)
+- Per-country phone number validation (syntax/rules only)
+- US and Canada link back to existing NANP area code and office code detail
+- Filter by continent or search by country name, ISO code, or calling code
+
+Dialling fields come from the open [VoixCall country-calling-codes](https://github.com/VoixCall/country-calling-codes) dataset. Official ITU references are listed on the international pages. This is not exchange-level numbering data — only a trustworthy country overview layer.
 
 ### Manual refresh
 
@@ -138,6 +157,7 @@ $env:NANPA_PORT=8003
 | `NANPA_REFRESH_ON_START` | `0` | Force download and rebuild at startup |
 | `NANPA_DB_MAX_AGE_DAYS` | `7` | Max age for source files and database before refresh |
 | `NANPA_REQUESTS_VERIFY` | `0` | TLS certificate verification for downloads |
+| `NANPA_INTERNATIONAL_DATA_URL` | VoixCall GitHub JSON | International dialling dataset URL |
 | `SECRET_KEY` | `dev-change-me` | App secret key |
 
 ## Project layout
@@ -150,12 +170,16 @@ nanpa2/
     constants.py
     database.py
     ingest.py            # Download and SQLite rebuild logic
+    international.py     # International E.164 ingest and validation
+    international_regulators.py
     maps.py
     templating.py        # Jinja2 helpers and url_for compatibility
     routes/
       home.py            # Home page and refresh UI routes
       refresh_stream.py  # SSE progress stream for data updates
+      international.py   # International browse routes
   templates/
+    international/       # International country list and detail pages
     base.html            # Shared layout, theme selector, and inline theme JS
     refresh_data.html    # Live update progress page
   static/
@@ -173,5 +197,6 @@ nanpa2/
 
 - Map images and curated CSV lists are stored under `static/`.
 - Generated NANPA download files and `pn.db` are gitignored.
+- `international_countries.json` is downloaded with other source files and is also gitignored.
 - First run may take a minute while source files download and the database is built.
 - The US office code file parser ignores NANPA's trailing header-only `File Updated` column.

@@ -13,14 +13,25 @@ def init_templates(template_dir) -> Jinja2Templates:
     return templates
 
 
+def _path_param_names(request: Request, name: str) -> set[str]:
+    for route in request.app.routes:
+        if getattr(route, "name", None) == name and hasattr(route, "param_convertors"):
+            return set(route.param_convertors.keys())
+    return set()
+
+
 def make_url_for(request: Request):
     def url_for(name: str, **kwargs):
         if name == "static":
             return f"/{kwargs['filename']}"
 
-        base = str(request.url_for(name))
-        if kwargs:
-            return f"{base}?{urlencode(kwargs)}"
+        path_names = _path_param_names(request, name)
+        path_params = {key: value for key, value in kwargs.items() if key in path_names}
+        query_params = {key: value for key, value in kwargs.items() if key not in path_names}
+
+        base = str(request.url_for(name, **path_params))
+        if query_params:
+            return f"{base}?{urlencode(query_params)}"
         return base
 
     return url_for

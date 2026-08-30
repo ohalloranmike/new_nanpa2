@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}International Numbering{% endblock %}
+
+{% block content %}
+<section class="card">
+    <h2>International Numbering (E.164)</h2>
+    <p class="meta">
+        Country calling codes, dialling prefixes, and example formats.
+        Data is compiled from open dialling datasets with number-length metadata from
+        <a href="https://github.com/google/libphonenumber" target="_blank" rel="noopener">libphonenumber</a>
+        (ITU-based). This is an overview layer — not exchange-level detail like NANPA/CNAC.
+    </p>
+    <p class="meta">
+        Official references:
+        {% for ref in itu_references %}
+            <a href="{{ ref.url }}" target="_blank" rel="noopener">{{ ref.name }}</a>{% if not loop.last %} · {% endif %}
+        {% endfor %}
+    </p>
+</section>
+
+<section class="card">
+    <h3>Browse</h3>
+    <form method="get" action="{{ url_for('international.index') }}" class="grid-2">
+        <div>
+            <label for="q">Search country or code</label>
+            <input id="q" type="text" name="q" value="{{ search_query }}" placeholder="e.g. France or 33">
+        </div>
+        <div>
+            <label for="continent">Continent / region</label>
+            <select id="continent" name="continent">
+                <option value="">All regions</option>
+                {% for item in continents %}
+                    <option value="{{ item }}" {% if item == selected_continent %}selected{% endif %}>{{ item }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div>
+            <button type="submit">Apply</button>
+            {% if search_query or selected_continent %}
+                <a class="btn" href="{{ url_for('international.index') }}" style="margin-left: 0.5rem;">Clear</a>
+            {% endif %}
+        </div>
+    </form>
+</section>
+
+<section class="card">
+    <h3>Countries ({{ countries|length }})</h3>
+    {% if countries %}
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Country</th>
+                    <th>ISO</th>
+                    <th>Calling code</th>
+                    <th>Region</th>
+                    <th>Intl. prefix</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for country in countries %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('international.country', iso2=country.iso2) }}">{{ country.name }}</a>
+                            {% if country.nanp_linked %}
+                                <span class="meta">(NANP detail available)</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ country.iso2 }}</td>
+                        <td>+{{ country.dial_code }}</td>
+                        <td>{{ country.continent or "—" }}</td>
+                        <td>{{ country.exit_code or "—" }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No countries matched your filters.</p>
+    {% endif %}
+</section>
+{% endblock %}

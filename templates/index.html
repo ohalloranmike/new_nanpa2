@@ -41,6 +41,14 @@
 </section>
 
 <section class="card">
+    <h2>International Numbering</h2>
+    <p class="meta">Browse E.164 country calling codes, dialling prefixes, and example formats outside the NANP detail already in this app.</p>
+    <div class="pill-list">
+        <a href="{{ url_for('international.index') }}">Browse international countries</a>
+    </div>
+</section>
+
+<section class="card">
     <h2>Countries</h2>
     <div class="pill-list">
         {% for key, label in countries.items() %}
