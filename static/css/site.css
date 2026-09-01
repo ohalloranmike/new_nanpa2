@@ -355,7 +355,7 @@ html[data-theme="nanpa"] .site-main .meta {
   color: #666666;
 }
 
-html[data-theme="nanpa"] .site-main a {
+html[data-theme="nanpa"] .site-main a:not(.btn) {
   color: #0071b3;
 }
 
@@ -513,6 +513,19 @@ button:hover,
   gap: 0.45rem;
 }
 
+.data-status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.75rem;
+}
+
+.data-status-header h2 {
+  margin: 0;
+}
+
 .pill-list a {
   display: inline-block;
   padding: 0.25rem 0.55rem;
@@ -580,10 +593,11 @@ button:hover,
 
 .progress-log {
   margin: 1rem 0 0;
-  padding-left: 1.25rem;
+  padding-left: 0;
   max-height: 280px;
   overflow-y: auto;
   color: var(--muted);
+  list-style: none;
 }
 
 .progress-log li {

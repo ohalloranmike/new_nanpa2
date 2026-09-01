@@ -15,7 +15,7 @@ class Config:
     SECRET_KEY = os.environ.get("SECRET_KEY", "dev-change-me")
 
     REFRESH_ON_START = os.environ.get("NANPA_REFRESH_ON_START", "0") == "1"
-    DB_MAX_AGE_DAYS = int(os.environ.get("NANPA_DB_MAX_AGE_DAYS", "7"))
+    DB_MAX_AGE_DAYS = int(os.environ.get("NANPA_DB_MAX_AGE_DAYS", "2"))
     REQUESTS_VERIFY = os.environ.get("NANPA_REQUESTS_VERIFY", "0") == "1"
 
     NANPA_NPA_URL = "https://reports.nanpa.com/public/npa_report.csv"

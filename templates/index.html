@@ -3,12 +3,14 @@
 
 {% block content %}
 <section class="card data-status">
-    <h2>Current Data</h2>
+    <div class="data-status-header">
+        <h2>Current Data</h2>
+        <div class="pill-list">
+            <a href="{{ url_for('home.refresh_data') }}">Update Data</a>
+        </div>
+    </div>
     <p>Database last updated: <strong>{{ db_last_updated or "Unknown" }}</strong></p>
     <p class="meta">Downloads fresh NANPA and CNAC source files and rebuilds the local database. This may take a minute.</p>
-    <div class="pill-list">
-        <a href="{{ url_for('home.refresh_data') }}">Update Data</a>
-    </div>
     {% if refresh_message %}
         <p class="notice success">{{ refresh_message }}</p>
     {% endif %}

@@ -40,7 +40,7 @@ The app downloads public NANPA and CNAC files, international dialling metadata, 
 
 ### Automatic refresh
 
-On startup, the app checks whether downloaded source files in `static/NANPA/` and the SQLite database `static/NANPA/pn.db` are missing or older than 7 days. If so, it re-downloads stale files and rebuilds the database.
+On startup, the app checks whether downloaded source files in `static/NANPA/` and the SQLite database `static/NANPA/pn.db` are missing or older than 2 days. If so, it re-downloads stale files and rebuilds the database.
 
 Set `NANPA_REFRESH_ON_START=1` to force a full download and rebuild on every launch.
 
@@ -148,7 +148,7 @@ $env:NANPA_PORT=8003
 | `NANPA_PORT` | `8002` | Server port |
 | `FLASK_DEBUG` | `0` | Enable Uvicorn auto-reload |
 | `NANPA_REFRESH_ON_START` | `0` | Force download and rebuild at startup |
-| `NANPA_DB_MAX_AGE_DAYS` | `7` | Max age for source files and database before refresh |
+| `NANPA_DB_MAX_AGE_DAYS` | `2` | Max age for source files and database before refresh |
 | `NANPA_REQUESTS_VERIFY` | `0` | TLS certificate verification for downloads |
 | `NANPA_INTERNATIONAL_DATA_URL` | `https://raw.githubusercontent.com/VoixCall/country-calling-codes/main/data/countries.json` | International dialling dataset URL |
 | `SECRET_KEY` | `dev-change-me` | App secret key |
