@@ -654,9 +654,10 @@ html[data-theme="nike"] .intl-map-country {
   cursor: pointer;
 }
 
-.intl-map-country--data:hover,
-.intl-map-country--data:focus {
-  opacity: 0.82;
+.intl-map-country:hover,
+.intl-map-country:focus {
+  fill: #fa5400 !important;
+  opacity: 1;
   outline: none;
 }
 
