@@ -5,7 +5,15 @@
     <p>{{ state_name }} ({{ state_code }})</p>
     <dl class="kv-grid">
         {% for key, value in oc.items() %}
-            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+            {% if value %}
+                <dt>{{ key }}</dt>
+                <dd>
+                    {{ value }}
+                    {% if key == 'Use' and use_definitions.get(value) %}
+                        <span class="meta use-definition">{{ use_definitions[value] }}</span>
+                    {% endif %}
+                </dd>
+            {% endif %}
         {% endfor %}
     </dl>
     <div class="stacked-links">
@@ -25,15 +33,6 @@
             {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
         {% endfor %}
     </dl>
-</section>
-
-<section class="card">
-    <h3>Office Code Use Definitions</h3>
-    <ul>
-        {% for key, value in use_definitions.items() %}
-            <li><strong>{{ key }}:</strong> {{ value }}</li>
-        {% endfor %}
-    </ul>
 </section>
 
 <section class="card maps">

@@ -5,7 +5,15 @@
     <p>{{ territory_name }} ({{ territory_code }})</p>
     <dl class="kv-grid">
         {% for key, value in oc.items() %}
-            {% if value %}<dt>{{ key }}</dt><dd>{{ value }}</dd>{% endif %}
+            {% if value %}
+                <dt>{{ key }}</dt>
+                <dd>
+                    {{ value }}
+                    {% if key == 'Use' and use_definitions.get(value) %}
+                        <span class="meta use-definition">{{ use_definitions[value] }}</span>
+                    {% endif %}
+                </dd>
+            {% endif %}
         {% endfor %}
     </dl>
 </section>

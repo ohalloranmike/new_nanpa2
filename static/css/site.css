@@ -507,6 +507,11 @@ button:hover,
   min-width: 0;
 }
 
+.kv-grid .use-definition {
+  display: block;
+  margin-top: 0.35rem;
+}
+
 .pill-list {
   display: flex;
   flex-wrap: wrap;
