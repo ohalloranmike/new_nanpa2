@@ -22,7 +22,7 @@
 <section class="card intl-map-card">
     <h3>Phone number length by country</h3>
     <p class="meta">
-        National number length in digits (excluding country code). Scroll to zoom, drag to pan, and click a shaded country for details.
+        National number length in digits (excluding country code). Hover for the country calling code. Scroll to zoom, drag to pan, and click a shaded country for details.
     </p>
     <div
         id="intl-map"
@@ -102,5 +102,5 @@
 
 {% block extra_scripts %}
 <script src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/international-map.js') }}?v=7"></script>
+<script src="{{ url_for('static', filename='js/international-map.js') }}?v=9"></script>
 {% endblock %}

@@ -317,6 +317,18 @@ def nanp_area_code(iso2: str, dial_code: str | None = None) -> str | None:
     return None
 
 
+def map_dial_label(country: dict) -> str:
+    dialing = dialing_display(country)
+    label = f"+{dialing['e164']}"
+    if (
+        dialing["nanp_member"]
+        and dialing["nanp_area_code"]
+        and not country.get("nanp_linked")
+    ):
+        label = f"+{dialing['e164']} {dialing['nanp_area_code']}"
+    return label
+
+
 def dialing_display(country: dict) -> dict:
     iso2 = country["iso2"]
     dial_code = (country.get("dial_code") or "").strip()

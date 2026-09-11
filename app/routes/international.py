@@ -1,7 +1,13 @@
 from fastapi import APIRouter, Query, Request
 
 from app.database import fetch_all, fetch_one, row_to_dict
-from app.international import dialing_display, is_nanp_member, itu_references, validate_phone_number
+from app.international import (
+    dialing_display,
+    is_nanp_member,
+    itu_references,
+    map_dial_label,
+    validate_phone_number,
+)
 from app.templating import render
 
 router = APIRouter()
@@ -54,18 +60,24 @@ def international_index(
     )
 
     map_rows = fetch_all(
-        "SELECT iso2, name, national_length_min, national_length_max FROM intl_country ORDER BY name"
+        """
+        SELECT iso2, name, dial_code, national_length_min, national_length_max, nanp_linked
+        FROM intl_country ORDER BY name
+        """
     )
-    map_countries = [
-        {
-            "iso2": row["iso2"],
-            "name": row["name"],
-            "min": row["national_length_min"],
-            "max": row["national_length_max"],
-            "url": str(request.url_for("international.country", iso2=row["iso2"])),
-        }
-        for row in map_rows
-    ]
+    map_countries = []
+    for row in map_rows:
+        country_dict = row_to_dict(row)
+        map_countries.append(
+            {
+                "iso2": country_dict["iso2"],
+                "name": country_dict["name"],
+                "min": country_dict["national_length_min"],
+                "max": country_dict["national_length_max"],
+                "dialLabel": map_dial_label(country_dict),
+                "url": str(request.url_for("international.country", iso2=country_dict["iso2"])),
+            }
+        )
 
     country_rows = [row_to_dict(row) for row in countries]
     for country in country_rows:

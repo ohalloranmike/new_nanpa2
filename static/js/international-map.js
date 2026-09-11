@@ -227,7 +227,10 @@
               if (country) {
                 showTooltip(
                   event,
-                  "<strong>" + country.name + "</strong><br>" + lengthLabel(country)
+                  "<strong>" + country.name + "</strong><br>" +
+                    country.dialLabel +
+                    " · " +
+                    lengthLabel(country)
                 );
               } else {
                 showTooltip(event, name + "<br>No data in this app");
