@@ -1,5 +1,7 @@
 """Map file resolution for states, territories, Canada, and countries."""
 
+from app.config import Config
+
 TERRITORY_MAPS = {
     "PR": "Puerto_Rico_787_939.gif",
     "AS": "American_Samoa_684.gif",
@@ -65,9 +67,15 @@ def territory_map_for_code(code: str) -> str:
 
 
 def us_state_map_images(state_code: str) -> list[str]:
+    static_dir = Config().STATIC_DIR
+    candidates = [
+        ("USACMaps", f"{state_code}.gif"),
+        ("USACMaps", f"{state_code}-inset1.gif"),
+        ("USACMaps", f"{state_code}-inset2.gif"),
+        ("USStateMaps", f"{state_code}.png"),
+    ]
     return [
-        f"{state_code}.gif",
-        f"{state_code}-inset1.gif",
-        f"{state_code}-inset2.gif",
-        f"{state_code}.png",
+        f"{folder}/{filename}"
+        for folder, filename in candidates
+        if (static_dir / folder / filename).is_file()
     ]

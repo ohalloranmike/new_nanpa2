@@ -240,7 +240,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | `static/NANPA/special_service_numbers.csv` | Reserved extensions (911, 988, 112, etc.) by country/region | Special Service Numbers list |
 | `static/NANPA/N11-Codes.csv` | N11 short-code definitions (211, 311, 411, …) | N11 codes list |
 | `static/NANPA/900codes.csv` | 900-series NXX assignments and entities | 900 codes list |
-| `static/USACMaps/` | US state area-code map GIFs | US area code and office code pages |
+| `static/USACMaps/` | US state area-code map GIFs (main map plus optional `-inset1` / `-inset2` GIFs per state) | US area code and office code pages |
 | `static/USStateMaps/` | US state outline PNGs | US area code and office code pages |
 | `static/USTerritoryACMaps/` | US territory area-code maps | Territory browse and lookup |
 | `static/CanadaACMaps/` | Canada province/territory area-code maps | Canada area code pages |
@@ -254,6 +254,7 @@ Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `Offic
 ## Notes
 
 - Map images and curated CSV lists are stored under `static/`.
+- US state map sections only render images that exist on disk (`app/maps.py` → `us_state_map_images`); states without inset GIFs do not show inset placeholders or 404 broken images.
 - Generated NANPA download files and `pn.db` are gitignored.
 - `international_countries.json` is downloaded with other source files and is also gitignored.
 - First run may take a minute while source files download and the database is built.

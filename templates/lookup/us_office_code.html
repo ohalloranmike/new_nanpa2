@@ -35,10 +35,11 @@
     </dl>
 </section>
 
+{% if map_images %}
 <section class="card maps">
-    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '.gif') }}" alt="US map">
-    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '-inset1.gif') }}" alt="Inset 1">
-    <img src="{{ url_for('static', filename='USACMaps/' ~ state_code ~ '-inset2.gif') }}" alt="Inset 2">
-    <img src="{{ url_for('static', filename='USStateMaps/' ~ state_code ~ '.png') }}" alt="State map">
+    {% for map_path in map_images %}
+        <img src="{{ url_for('static', filename=map_path) }}" alt="Map {{ state_code }}">
+    {% endfor %}
 </section>
+{% endif %}
 {% endblock %}

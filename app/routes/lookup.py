@@ -154,6 +154,7 @@ def office_codes(request: Request, npa_nxx: str = Query("", alias="npa-nxx")):
                     "ocn": oc_row["OCN"],
                     "company": oc_row["Company"],
                     "use_definitions": US_OFFICE_USE,
+                    "map_images": us_state_map_images(state),
                 },
             )
         if territory_code in US_TERRITORIES:
