@@ -616,6 +616,10 @@ button:hover,
   border-radius: 8px;
 }
 
+#validate {
+  scroll-margin-top: 6rem;
+}
+
 .intl-map-card {
   overflow: hidden;
 }

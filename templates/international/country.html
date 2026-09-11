@@ -9,6 +9,31 @@
     <p class="meta">ISO {{ country.iso2 }} · {{ country.continent or "Region unknown" }}</p>
 </section>
 
+<section class="card" id="validate">
+    <h3>Validate a number</h3>
+    <p class="meta">Uses libphonenumber rules for {{ country.iso2 }}. Syntax check only — does not verify the line is in service.</p>
+    <form method="get" action="{{ url_for('international.country', iso2=country.iso2) }}#validate">
+        <label for="phone">Phone number</label>
+        <input id="phone" type="text" name="phone" value="{{ phone_query }}" placeholder="e.g. {{ country.example_mobile or country.lib_example or '+...' }}">
+        <button type="submit">Validate</button>
+    </form>
+    {% if validation %}
+        <p class="notice {% if validation.valid %}success{% elif validation.possible %}{% else %}error{% endif %}">
+            {{ validation.message }}
+        </p>
+        {% if validation.formatted %}
+            <dl class="kv-grid">
+                <dt>International</dt>
+                <dd>{{ validation.formatted }}</dd>
+                <dt>E.164</dt>
+                <dd>{{ validation.e164 }}</dd>
+                <dt>Type</dt>
+                <dd>{{ validation.type }}</dd>
+            </dl>
+        {% endif %}
+    {% endif %}
+</section>
+
 {% if dialing.nanp_member %}
 <section class="card">
     <h3>North American Numbering Plan (NANP)</h3>
@@ -115,31 +140,6 @@
     </p>
 </section>
 {% endif %}
-
-<section class="card">
-    <h3>Validate a number</h3>
-    <p class="meta">Uses libphonenumber rules for {{ country.iso2 }}. Syntax check only — does not verify the line is in service.</p>
-    <form method="get" action="{{ url_for('international.country', iso2=country.iso2) }}">
-        <label for="phone">Phone number</label>
-        <input id="phone" type="text" name="phone" value="{{ phone_query }}" placeholder="e.g. {{ country.example_mobile or country.lib_example or '+...' }}">
-        <button type="submit">Validate</button>
-    </form>
-    {% if validation %}
-        <p class="notice {% if validation.valid %}success{% elif validation.possible %}{% else %}error{% endif %}">
-            {{ validation.message }}
-        </p>
-        {% if validation.formatted %}
-            <dl class="kv-grid">
-                <dt>International</dt>
-                <dd>{{ validation.formatted }}</dd>
-                <dt>E.164</dt>
-                <dd>{{ validation.e164 }}</dd>
-                <dt>Type</dt>
-                <dd>{{ validation.type }}</dd>
-            </dl>
-        {% endif %}
-    {% endif %}
-</section>
 
 <section class="card">
     <h3>Sources</h3>
