@@ -104,7 +104,7 @@
         .attr("role", "img")
         .attr("aria-label", "World map colored by national phone number length");
 
-      var mapLayer = svg.append("g");
+      var mapLayer = svg.append("g").attr("class", "intl-map-layer");
       var projection = d3.geoNaturalEarth1();
       var path = d3.geoPath(projection);
       var color = d3
@@ -249,6 +249,58 @@
               if (country && country.url) {
                 window.location.href = country.url;
               }
+            });
+
+          var zoom = d3
+            .zoom()
+            .scaleExtent([1, 8])
+            .clickDistance(5)
+            .on("zoom", function (event) {
+              mapLayer.attr("transform", event.transform);
+            });
+
+          svg.call(zoom);
+
+          function zoomBy(factor) {
+            svg
+              .transition()
+              .duration(200)
+              .call(zoom.scaleBy, factor, [width / 2, height / 2]);
+          }
+
+          var controls = d3
+            .select(container)
+            .append("div")
+            .attr("class", "intl-map-controls");
+
+          controls
+            .append("button")
+            .attr("type", "button")
+            .attr("class", "intl-map-control intl-map-reset")
+            .attr("aria-label", "Reset map zoom")
+            .text("Reset view")
+            .on("click", function () {
+              svg.transition().duration(250).call(zoom.transform, d3.zoomIdentity);
+            });
+
+          controls
+            .append("button")
+            .attr("type", "button")
+            .attr("class", "intl-map-control intl-map-zoom")
+            .attr("aria-label", "Zoom in")
+            .text("+")
+            .on("click", function () {
+              zoomBy(1.35);
+            });
+
+          controls
+            .append("button")
+            .attr("type", "button")
+            .attr("class", "intl-map-control intl-map-zoom")
+            .attr("aria-label", "Zoom out")
+            .text("\u2212")
+            .on("click", function () {
+              zoomBy(1 / 1.35);
             });
 
           drawLegend();

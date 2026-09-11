@@ -15,7 +15,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Separate data refresh command (`refresh_data.py`)
 - Responsive UI with shared CSS and selectable themes (**NANPA** or **Nike**)
 - International E.164 country overview with dialling metadata and libphonenumber validation
-- Interactive world map on `/international` colored by national phone number length (bundled D3 + Natural Earth GeoJSON — no external map tiles at runtime)
+- Interactive zoomable world map on `/international` colored by national phone number length (scroll/pinch zoom, drag to pan, +/- and reset controls; bundled D3 + Natural Earth GeoJSON — no external map tiles at runtime)
 - Supplemental international regions from libphonenumber (245 countries/territories) with NANP area-code context for +1 territories
 - Feature parity with original app routes
 
@@ -62,7 +62,7 @@ Browse **International** in the nav, the **Browse international countries** link
 
 Features:
 
-- **World map** — choropleth shaded by national number length (min–max digits from libphonenumber); click a country to open its detail page. Map assets are bundled under `static/maps/` and `static/js/` (no CDN map tiles).
+- **World map** — choropleth shaded by national number length (min–max digits from libphonenumber). Scroll or pinch to zoom, drag to pan, and use **+** / **−** / **Reset view** in the top-right corner. Countries highlight orange on hover; click a shaded country to open its detail page. Map assets are bundled under `static/maps/` and `static/js/` (no CDN map tiles).
 - Country calling codes, international exit codes, and trunk prefixes
 - Mobile/landline prefix hints and example formats
 - National number length ranges from [libphonenumber](https://github.com/google/libphonenumber)
@@ -247,7 +247,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | `static/CountryACMaps/` | Caribbean and other NANP country maps | Country browse pages (Jamaica, Bahamas, etc.) |
 | `static/maps/world-countries.geojson` | [Natural Earth](https://www.naturalearthdata.com/) 110m country boundaries (`ISO_A2`, continent/subregion) | International choropleth map; continent and country names for supplemental `intl_country` rows |
 | `static/js/d3.min.js` | D3.js v7 (minified, bundled) | International map rendering |
-| `static/js/international-map.js` | Map interaction (choropleth, legend, click-through) | `/international` world map |
+| `static/js/international-map.js` | Map interaction (choropleth, legend, zoom/pan, controls, hover, click-through) | `/international` world map |
 
 Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `OfficeCodeDatabaseDefinitions.csv`, `FGD-CIC.csv`, `FGB-CIC.csv`) are legacy reference material from the original app and are not loaded by current routes.
 
