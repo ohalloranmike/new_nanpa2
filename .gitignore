@@ -10,3 +10,6 @@ static/NANPA/CoCodeAssignment_Utilized_AllStates_Public.zip
 static/NANPA/COCodeStatus_ALL.csv
 static/NANPA/COCodeStatus_ALL.zip
 static/NANPA/international_countries.json
+
+pn.db
+tmp_audit_dial.py

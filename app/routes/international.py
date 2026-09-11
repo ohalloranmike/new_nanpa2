@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Query, Request
 
 from app.database import fetch_all, fetch_one, row_to_dict
-from app.international import itu_references, validate_phone_number
+from app.international import dialing_display, is_nanp_member, itu_references, validate_phone_number
 from app.templating import render
 
 router = APIRouter()
@@ -53,11 +53,30 @@ def international_index(
         "SELECT DISTINCT continent FROM intl_country WHERE continent IS NOT NULL ORDER BY continent"
     )
 
+    map_rows = fetch_all(
+        "SELECT iso2, name, national_length_min, national_length_max FROM intl_country ORDER BY name"
+    )
+    map_countries = [
+        {
+            "iso2": row["iso2"],
+            "name": row["name"],
+            "min": row["national_length_min"],
+            "max": row["national_length_max"],
+            "url": str(request.url_for("international.country", iso2=row["iso2"])),
+        }
+        for row in map_rows
+    ]
+
+    country_rows = [row_to_dict(row) for row in countries]
+    for country in country_rows:
+        country["dialing"] = dialing_display(country)
+
     return render(
         request,
         "international/index.html",
         {
-            "countries": [row_to_dict(row) for row in countries],
+            "countries": country_rows,
+            "map_countries": map_countries,
             "continents": [row["continent"] for row in continents],
             "selected_continent": continent,
             "search_query": q,
@@ -95,22 +114,44 @@ def international_country(
         )
 
     country_dict = row_to_dict(country)
-    same_code = fetch_all(
-        "SELECT iso2, name FROM intl_country WHERE dial_code = ? AND iso2 != ? ORDER BY name",
-        (country_dict["dial_code"], iso2),
-    )
+    dialing = dialing_display(country_dict)
+
+    if is_nanp_member(iso2):
+        same_code = fetch_all(
+            """
+            SELECT iso2, name FROM intl_country
+            WHERE (dial_code = '1' OR dial_code LIKE '1-%') AND iso2 != ?
+            ORDER BY name
+            """,
+            (iso2,),
+        )
+    else:
+        same_code = fetch_all(
+            "SELECT iso2, name FROM intl_country WHERE dial_code = ? AND iso2 != ? ORDER BY name",
+            (country_dict["dial_code"], iso2),
+        )
 
     validation = validate_phone_number(phone, iso2) if phone else None
+
+    if (
+        dialing["nanp_member"]
+        and dialing["nanp_area_code"]
+        and not country_dict.get("nanp_linked")
+    ):
+        page_header = f"{country_dict['name']} (+{dialing['e164']} {dialing['nanp_area_code']})"
+    else:
+        page_header = f"{country_dict['name']} (+{dialing['e164']})"
 
     return render(
         request,
         "international/country.html",
         {
             "country": country_dict,
+            "dialing": dialing,
             "same_code_countries": [row_to_dict(row) for row in same_code],
             "validation": validation,
             "phone_query": phone,
             "itu_references": itu_references(),
-            "page_header": f"{country_dict['name']} (+{country_dict['dial_code']})",
+            "page_header": page_header,
         },
     )

@@ -9,20 +9,34 @@
     <p class="meta">ISO {{ country.iso2 }} · {{ country.continent or "Region unknown" }}</p>
 </section>
 
-{% if country.nanp_linked %}
+{% if dialing.nanp_member %}
 <section class="card">
-    <h3>North American Numbering Plan</h3>
-    <p>
-        {{ country.name }} uses country code <strong>+{{ country.dial_code }}</strong> under the NANP.
-        This app already provides detailed area code and office code data for
-        {% if country.iso2 == 'US' %}
-            the <a href="{{ url_for('home.index') }}">United States</a>.
-        {% elif country.iso2 == 'CA' %}
-            <a href="{{ url_for('browse.area_code_maps', state='CANADA') }}">Canada</a>.
-        {% else %}
-            NANP members.
-        {% endif %}
-    </p>
+    <h3>North American Numbering Plan (NANP)</h3>
+    {% if country.nanp_linked %}
+        <p>
+            {{ country.name }} uses country calling code <strong>+{{ dialing.e164 }}</strong> under the NANP.
+            This app provides detailed area code and office code data for
+            {% if country.iso2 == 'US' %}
+                the <a href="{{ url_for('home.index') }}">United States</a>.
+            {% elif country.iso2 == 'CA' %}
+                <a href="{{ url_for('browse.area_code_maps', state='CANADA') }}">Canada</a>.
+            {% endif %}
+        </p>
+    {% else %}
+        <p>
+            {{ country.name }} is part of the North American Numbering Plan and shares country calling code
+            <strong>+{{ dialing.e164 }}</strong> with the United States, Canada, and other Caribbean territories.
+            {% if dialing.nanp_area_code and not country.nanp_linked %}
+                Numbers in {{ country.name }} use NANP area code <strong>{{ dialing.nanp_area_code }}</strong>
+                {% if country.lib_example %}
+                    (for example, {{ country.lib_example }}).
+                {% else %}
+                    .
+                {% endif %}
+            {% endif %}
+            This is not the United States country code alone — the area code identifies the territory.
+        </p>
+    {% endif %}
 </section>
 {% endif %}
 
@@ -30,7 +44,12 @@
     <h3>Dialling</h3>
     <dl class="kv-grid">
         <dt>Country calling code (E.164)</dt>
-        <dd>+{{ country.dial_code }}</dd>
+        <dd>
+            +{{ dialing.e164 }}
+            {% if dialing.nanp_member and dialing.nanp_area_code and not country.nanp_linked %}
+                <span class="meta">(NANP area code {{ dialing.nanp_area_code }})</span>
+            {% endif %}
+        </dd>
 
         <dt>International prefix (exit code)</dt>
         <dd>{{ country.exit_code or "—" }}</dd>
@@ -79,7 +98,7 @@
 
 {% if same_code_countries %}
 <section class="card">
-    <h3>Other +{{ country.dial_code }} countries</h3>
+    <h3>Other +{{ dialing.e164 }} countries</h3>
     <div class="pill-list">
         {% for other in same_code_countries %}
             <a href="{{ url_for('international.country', iso2=other.iso2) }}">{{ other.name }}</a>

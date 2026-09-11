@@ -19,6 +19,21 @@
     </p>
 </section>
 
+<section class="card intl-map-card">
+    <h3>Phone number length by country</h3>
+    <p class="meta">
+        National number length in digits (excluding country code). Click a shaded country for details.
+    </p>
+    <div
+        id="intl-map"
+        class="intl-map"
+        data-geo-url="{{ url_for('static', filename='maps/world-countries.geojson') }}?v=3"
+        aria-label="World map of phone number lengths"
+    ></div>
+    <div id="intl-map-legend" class="intl-map-legend" aria-hidden="true"></div>
+    <script id="intl-map-data" type="application/json">{{ map_countries | tojson }}</script>
+</section>
+
 <section class="card">
     <h3>Browse</h3>
     <form method="get" action="{{ url_for('international.index') }}" class="grid-2">
@@ -67,7 +82,12 @@
                             {% endif %}
                         </td>
                         <td>{{ country.iso2 }}</td>
-                        <td>+{{ country.dial_code }}</td>
+                        <td>
+                            +{{ country.dialing.e164 }}
+                            {% if country.dialing.nanp_member and country.dialing.nanp_area_code and not country.nanp_linked %}
+                                <span class="meta">({{ country.dialing.nanp_area_code }})</span>
+                            {% endif %}
+                        </td>
                         <td>{{ country.continent or "—" }}</td>
                         <td>{{ country.exit_code or "—" }}</td>
                     </tr>
@@ -78,4 +98,9 @@
         <p>No countries matched your filters.</p>
     {% endif %}
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/international-map.js') }}?v=5"></script>
 {% endblock %}

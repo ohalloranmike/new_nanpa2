@@ -616,6 +616,79 @@ button:hover,
   border-radius: 8px;
 }
 
+.intl-map-card {
+  overflow: hidden;
+}
+
+.intl-map {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  margin-top: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--accent);
+}
+
+.intl-map svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.intl-map-country {
+  stroke: #ffffff;
+  stroke-width: 0.5px;
+  transition: opacity 0.15s ease;
+}
+
+html[data-theme="nike"] .intl-map-country {
+  stroke: #161616;
+}
+
+.intl-map-country--nodata {
+  cursor: default;
+}
+
+.intl-map-country--data {
+  cursor: pointer;
+}
+
+.intl-map-country--data:hover,
+.intl-map-country--data:focus {
+  opacity: 0.82;
+  outline: none;
+}
+
+.intl-map-tooltip {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  font-size: 0.85rem;
+  line-height: 1.35;
+  max-width: 220px;
+}
+
+.intl-map-legend {
+  margin-top: 0.75rem;
+}
+
+.intl-map-legend svg {
+  width: min(280px, 100%);
+  height: auto;
+}
+
+.intl-map-legend-label {
+  fill: var(--muted);
+  font-size: 12px;
+}
+
 .error {
   color: var(--danger);
   font-weight: 600;

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?v=10">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/site.css') }}?v=13">
     <script>
         (function () {
             var THEME_STORAGE_KEY = "nanpa2-ui-theme";
@@ -113,5 +113,6 @@
         }
     })();
 </script>
+{% block extra_scripts %}{% endblock %}
 </body>
 </html>

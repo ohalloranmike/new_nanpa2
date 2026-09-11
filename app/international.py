@@ -3,6 +3,7 @@ import sqlite3
 from pathlib import Path
 
 import phonenumbers
+import pycountry
 import requests
 
 from phonenumbers import PhoneNumberType
@@ -61,6 +62,95 @@ def _lib_example_number(iso2: str) -> str | None:
     if example is None:
         return None
     return phonenumbers.format_number(example, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+
+
+def _continent_from_natural_earth(props: dict) -> str | None:
+    subregion = (props.get("SUBREGION") or "").strip()
+    if subregion == "Western Asia":
+        return "Middle East"
+
+    continent = (props.get("CONTINENT") or "").strip()
+    mapping = {
+        "Africa": "Africa",
+        "Asia": "Asia",
+        "Europe": "Europe",
+        "North America": "North America",
+        "South America": "South America",
+        "Oceania": "Oceania",
+    }
+    return mapping.get(continent)
+
+
+def _load_geo_country_lookup(static_dir: Path) -> dict[str, dict[str, str | None]]:
+    path = static_dir / "maps" / "world-countries.geojson"
+    if not path.exists():
+        return {}
+
+    geo = json.loads(path.read_text(encoding="utf-8"))
+    lookup: dict[str, dict[str, str | None]] = {}
+    for feature in geo.get("features", []):
+        props = feature.get("properties") or {}
+        iso2 = props.get("ISO_A2_EH") or props.get("ISO_A2")
+        if not iso2 or iso2 == "-99":
+            continue
+        iso2 = str(iso2).upper()
+        name = (props.get("NAME_EN") or props.get("NAME") or props.get("ADMIN") or iso2).strip()
+        lookup[iso2] = {
+            "name": name,
+            "continent": _continent_from_natural_earth(props),
+        }
+    return lookup
+
+
+def _country_display_name(iso2: str, geo_lookup: dict[str, dict[str, str | None]]) -> str:
+    geo_entry = geo_lookup.get(iso2) or {}
+    name = geo_entry.get("name")
+    if name:
+        return str(name)
+
+    try:
+        country = pycountry.countries.get(alpha_2=iso2)
+    except LookupError:
+        country = None
+    if country is not None:
+        return country.name
+    return iso2
+
+
+def _record_from_phonenumbers(iso2: str, geo_lookup: dict[str, dict[str, str | None]]) -> dict | None:
+    try:
+        metadata = phonenumbers.PhoneMetadata.metadata_for_region(iso2)
+    except Exception:
+        return None
+    if metadata is None:
+        return None
+
+    dial_code = str(metadata.country_code)
+    geo_entry = geo_lookup.get(iso2) or {}
+    name = _country_display_name(iso2, geo_lookup)
+    continent = geo_entry.get("continent")
+    length_min, length_max = _national_length_range(iso2)
+    regulator = REGULATORS.get(iso2, {})
+
+    return {
+        "iso2": iso2,
+        "name": name,
+        "dial_code": dial_code,
+        "continent": continent,
+        "exit_code": None,
+        "trunk_prefix": None,
+        "mobile_prefix": None,
+        "landline_prefix": None,
+        "example_mobile": None,
+        "example_landline": None,
+        "lib_example": _lib_example_number(iso2),
+        "international_format": None,
+        "national_length_min": length_min,
+        "national_length_max": length_max,
+        "regulator_name": regulator.get("name"),
+        "regulator_url": regulator.get("url"),
+        "nanp_linked": 1 if iso2 in NANP_ISO2 else 0,
+    }
 
 
 def _normalize_record(entry: dict) -> dict | None:
@@ -128,8 +218,18 @@ def load_international_countries(conn: sqlite3.Connection, source_path: Path) ->
     )
 
     rows = []
+    seen_iso2: set[str] = set()
     for entry in payload:
         record = _normalize_record(entry)
+        if record:
+            rows.append(record)
+            seen_iso2.add(record["iso2"])
+
+    geo_lookup = _load_geo_country_lookup(source_path.parent.parent)
+    for iso2 in sorted(phonenumbers.SUPPORTED_REGIONS):
+        if iso2 in seen_iso2:
+            continue
+        record = _record_from_phonenumbers(iso2, geo_lookup)
         if record:
             rows.append(record)
 
@@ -188,6 +288,50 @@ def validate_phone_number(phone: str, iso2: str) -> dict:
         "formatted": formatted,
         "e164": e164,
         "type": type_label,
+    }
+
+
+def is_nanp_member(iso2: str) -> bool:
+    try:
+        metadata = phonenumbers.PhoneMetadata.metadata_for_region(iso2)
+    except Exception:
+        return False
+    return metadata is not None and metadata.country_code == 1
+
+
+def nanp_area_code(iso2: str, dial_code: str | None = None) -> str | None:
+    if dial_code and "-" in dial_code:
+        prefix, suffix = dial_code.split("-", 1)
+        if prefix == "1" and suffix.isdigit():
+            return suffix
+
+    try:
+        example = phonenumbers.example_number(iso2)
+    except Exception:
+        return None
+    if example is None:
+        return None
+    nsn = phonenumbers.national_significant_number(example)
+    if len(nsn) >= 10:
+        return nsn[:3]
+    return None
+
+
+def dialing_display(country: dict) -> dict:
+    iso2 = country["iso2"]
+    dial_code = (country.get("dial_code") or "").strip()
+    nanp = is_nanp_member(iso2)
+    area = nanp_area_code(iso2, dial_code) if nanp else None
+
+    if nanp or dial_code.startswith("1"):
+        e164 = "1"
+    else:
+        e164 = dial_code.lstrip("+")
+
+    return {
+        "e164": e164,
+        "nanp_member": nanp,
+        "nanp_area_code": area,
     }
 
 

@@ -15,13 +15,15 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Separate data refresh command (`refresh_data.py`)
 - Responsive UI with shared CSS and selectable themes (**NANPA** or **Nike**)
 - International E.164 country overview with dialling metadata and libphonenumber validation
+- Interactive world map on `/international` colored by national phone number length (bundled D3 + Natural Earth GeoJSON — no external map tiles at runtime)
+- Supplemental international regions from libphonenumber (245 countries/territories) with NANP area-code context for +1 territories
 - Feature parity with original app routes
 
 ## Requirements
 
 - Python 3.12+ recommended
 - Windows: use the `py` launcher if `python` is not on PATH
-- Dependencies include [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers) for international number validation
+- Dependencies include [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers) for international number validation and [pycountry](https://github.com/flyingcircusio/pycountry) for supplemental country names
 
 ## Setup
 
@@ -60,13 +62,16 @@ Browse **International** in the nav, the **Browse international countries** link
 
 Features:
 
+- **World map** — choropleth shaded by national number length (min–max digits from libphonenumber); click a country to open its detail page. Map assets are bundled under `static/maps/` and `static/js/` (no CDN map tiles).
 - Country calling codes, international exit codes, and trunk prefixes
 - Mobile/landline prefix hints and example formats
 - National number length ranges from [libphonenumber](https://github.com/google/libphonenumber)
+- **NANP context** — territories that share country calling code +1 (e.g. Anguilla, Jamaica) show their NANP area code on list and detail pages so +1 is not mistaken for the United States alone
 - Links to national regulators where curated (e.g. Ofcom, CNAC, NANPA)
 - Per-country phone number validation (syntax/rules only)
 - US and Canada link back to existing NANP area code and office code detail
 - Filter by continent or search by country name, ISO code, or calling code
+- **Supplemental regions** — countries present in libphonenumber but missing from the VoixCall JSON are added at refresh time (names from Natural Earth GeoJSON or pycountry; dialling fields may show — where VoixCall had no data)
 
 This is not exchange-level numbering data — only a trustworthy country overview layer. See [Data sources](#data-sources) for the exact datasets and URLs.
 
@@ -177,6 +182,11 @@ nanpa2/
     refresh_data.html    # Live update progress page
   static/
     css/
+    js/
+      d3.min.js          # D3 v7 (bundled for international map)
+      international-map.js
+    maps/
+      world-countries.geojson  # Natural Earth 110m countries (map + supplemental names)
     NANPA/               # Downloaded data and generated pn.db (mostly gitignored)
   .vscode/
     settings.json        # Local Python interpreter path
@@ -207,13 +217,14 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | `oc` | US office code text file | US office code records |
 | `caoc` | `COCodeStatus_ALL.csv` | Canada office code records |
 | `ocn` | `oc` | Distinct US operating companies (OCN + company name) |
-| `intl_country` | `international_countries.json` + enrichments below | International country overview records |
+| `intl_country` | `international_countries.json` + phonenumbers/libphonenumber gaps + enrichments below | International country overview records |
 
 ### Runtime library metadata (not downloaded)
 
 | Source | What you get | Used for |
 |--------|--------------|----------|
-| [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers) (Google [libphonenumber](https://github.com/google/libphonenumber) metadata bundled in the package) | National number length ranges, example numbers, parse/validate rules | International country detail (`national_length_min` / `max`, `lib_example`) and per-country phone validation on `/international/{iso2}?phone=...` |
+| [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers) (Google [libphonenumber](https://github.com/google/libphonenumber) metadata bundled in the package) | National number length ranges, example numbers, parse/validate rules, and regions missing from VoixCall | International country detail (`national_length_min` / `max`, `lib_example`), supplemental `intl_country` rows, and per-country phone validation on `/international/{iso2}?phone=...` |
+| [pycountry](https://github.com/flyingcircusio/pycountry) | ISO 3166-1 country names for supplemental regions | Country names when not present in the bundled Natural Earth map data |
 
 ### Curated in code (not downloaded)
 
@@ -234,6 +245,9 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | `static/USTerritoryACMaps/` | US territory area-code maps | Territory browse and lookup |
 | `static/CanadaACMaps/` | Canada province/territory area-code maps | Canada area code pages |
 | `static/CountryACMaps/` | Caribbean and other NANP country maps | Country browse pages (Jamaica, Bahamas, etc.) |
+| `static/maps/world-countries.geojson` | [Natural Earth](https://www.naturalearthdata.com/) 110m country boundaries (`ISO_A2`, continent/subregion) | International choropleth map; continent and country names for supplemental `intl_country` rows |
+| `static/js/d3.min.js` | D3.js v7 (minified, bundled) | International map rendering |
+| `static/js/international-map.js` | Map interaction (choropleth, legend, click-through) | `/international` world map |
 
 Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `OfficeCodeDatabaseDefinitions.csv`, `FGD-CIC.csv`, `FGB-CIC.csv`) are legacy reference material from the original app and are not loaded by current routes.
 
