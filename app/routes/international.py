@@ -12,6 +12,22 @@ from app.templating import render
 
 router = APIRouter()
 
+_INTL_COUNTRY_SORT_SQL = {
+    "name": "name COLLATE NOCASE",
+    "iso2": "iso2",
+    "dial_code": "CAST(NULLIF(dial_code, '') AS INTEGER), dial_code",
+    "continent": "continent COLLATE NOCASE",
+    "exit_code": "exit_code",
+}
+
+
+def _intl_country_sort(sort: str, direction: str) -> tuple[str, str]:
+    sort_key = (sort or "name").strip().lower()
+    if sort_key not in _INTL_COUNTRY_SORT_SQL:
+        sort_key = "name"
+    sort_dir = "desc" if (direction or "").strip().lower() == "desc" else "asc"
+    return sort_key, sort_dir
+
 
 def _table_exists() -> bool:
     row = fetch_one(
@@ -25,6 +41,8 @@ def international_index(
     request: Request,
     continent: str = Query(""),
     q: str = Query(""),
+    sort: str | None = Query(None),
+    dir: str | None = Query(None),
 ):
     if not _table_exists():
         return render(
@@ -51,8 +69,14 @@ def international_index(
         params.extend([like, like, like])
 
     where = f"WHERE {' AND '.join(clauses)}" if clauses else ""
+    if "sort" in request.query_params:
+        sort_key, sort_dir = _intl_country_sort(sort or "name", dir or "asc")
+    else:
+        sort_key, sort_dir = "name", "asc"
+    order_sql = _INTL_COUNTRY_SORT_SQL[sort_key]
+    order_clause = f"ORDER BY {order_sql} {sort_dir.upper()}, iso2 ASC"
     countries = fetch_all(
-        f"SELECT * FROM intl_country {where} ORDER BY name",
+        f"SELECT * FROM intl_country {where} {order_clause}",
         params,
     )
     continents = fetch_all(
@@ -92,6 +116,8 @@ def international_index(
             "continents": [row["continent"] for row in continents],
             "selected_continent": continent,
             "search_query": q,
+            "sort": sort_key,
+            "sort_dir": sort_dir,
             "itu_references": itu_references(),
             "page_header": "International Numbering",
         },

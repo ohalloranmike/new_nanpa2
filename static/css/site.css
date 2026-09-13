@@ -511,6 +511,29 @@ button:hover,
   background: var(--accent);
 }
 
+.data-table-sort {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.data-table-sort:hover {
+  text-decoration: underline;
+}
+
+.data-table-sort--active {
+  text-decoration: underline;
+}
+
+.data-table-sort-indicator {
+  margin-left: 0.2rem;
+  font-size: 0.85em;
+}
+
+.intl-countries-card {
+  scroll-margin-top: 3.5rem;
+}
+
 .data-table tr:nth-child(even) td {
   background: var(--table-stripe);
 }

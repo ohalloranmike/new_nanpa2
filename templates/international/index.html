@@ -59,17 +59,37 @@
     </form>
 </section>
 
-<section class="card">
+<section class="card intl-countries-card" id="intl-countries">
     <h3>Countries ({{ countries|length }})</h3>
     {% if countries %}
-        <table class="data-table">
+        <table class="data-table data-table--sortable">
             <thead>
                 <tr>
-                    <th>Country</th>
-                    <th>ISO</th>
-                    <th>Calling code</th>
-                    <th>Region</th>
-                    <th>Intl. prefix</th>
+                    {% set ns = namespace() %}
+                    {% for column, label in [
+                        ('name', 'Country'),
+                        ('iso2', 'ISO'),
+                        ('dial_code', 'Calling code'),
+                        ('continent', 'Region'),
+                        ('exit_code', 'Intl. prefix'),
+                    ] %}
+                        {% if sort == column and sort_dir == 'asc' %}
+                            {% set ns.next_dir = 'desc' %}
+                        {% else %}
+                            {% set ns.next_dir = 'asc' %}
+                        {% endif %}
+                        <th scope="col">
+                            <a
+                                class="data-table-sort{% if sort == column %} data-table-sort--active{% endif %}"
+                                href="{{ url_for('international.index', q=search_query, continent=selected_continent, sort=column, dir=ns.next_dir) }}#intl-countries"
+                            >
+                                {{ label }}
+                                {% if sort == column %}
+                                    <span class="data-table-sort-indicator" aria-hidden="true">{{ '↑' if sort_dir == 'asc' else '↓' }}</span>
+                                {% endif %}
+                            </a>
+                        </th>
+                    {% endfor %}
                 </tr>
             </thead>
             <tbody>

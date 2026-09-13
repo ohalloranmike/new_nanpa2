@@ -93,12 +93,6 @@
         <a href="{{ url_for('ocn.canada_ocn_all', sort='company') }}">Canada Operating Companies</a>
         <a href="{{ url_for('ocn.canada_exchange_all', sort='npa') }}">Canada Exchange List</a>
     </div>
-
-    <form action="{{ url_for('ocn.ocn_detail') }}" method="get" style="margin-top: 1rem;">
-        <label for="ocn">Find US operating company by OCN</label>
-        <input id="ocn" type="text" name="ocn" maxlength="4" placeholder="e.g. 1234">
-        <button type="submit">Search OCN</button>
-    </form>
 </section>
 {% endblock %}
 
