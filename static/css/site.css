@@ -127,41 +127,43 @@ a:hover {
   box-shadow: 0 2px 12px rgba(15, 23, 42, 0.12);
 }
 
-.header-top {
-  background: var(--header-top-bg);
-  color: var(--header-top-text);
-  border-bottom: 1px solid var(--header-nav-border);
-}
-
-.header-top-inner {
+.header-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 0.5rem 0.75rem;
   flex-wrap: wrap;
+  padding: 0.3rem 0;
+  background: var(--header-top-bg);
+  color: var(--header-top-text);
+  border-bottom: 4px solid var(--header-accent-border);
 }
 
 .header-nav {
-  background: var(--header-nav-bg);
-  border-bottom: 8px solid var(--header-accent-border);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin-left: auto;
 }
 
 .brand {
   display: flex;
-  gap: 1rem;
+  gap: 0.5rem;
   align-items: center;
-  padding: 1.25rem 0;
+  min-width: 0;
+  flex: 1 1 12rem;
 }
 
 .brand img {
-  width: 56px;
+  width: 32px;
   height: auto;
+  flex-shrink: 0;
 }
 
 .brand-icon--nike {
   display: none;
-  width: 56px;
+  width: 40px;
   height: auto;
+  flex-shrink: 0;
   aspect-ratio: 69 / 32;
   color: var(--primary);
 }
@@ -174,20 +176,15 @@ html[data-theme="nike"] .brand-icon--nike {
   display: block;
 }
 
-.brand h1 {
+.brand-title {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: 1rem;
+  line-height: 1.15;
+  font-weight: 700;
   color: var(--header-top-text);
-}
-
-.brand p {
-  margin: 0.25rem 0 0;
-  color: var(--header-top-muted);
-  font-size: 0.95rem;
-}
-
-.brand a {
-  color: var(--header-top-link);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .header-actions {
@@ -207,8 +204,8 @@ html[data-theme="nike"] .brand-icon--nike {
 
 .theme-select {
   font: inherit;
-  font-size: 0.85rem;
-  padding: 0.45rem 0.65rem;
+  font-size: 0.8rem;
+  padding: 0.2rem 0.45rem;
   border: 1px solid var(--theme-select-border);
   border-radius: 4px;
   background: var(--theme-select-bg);
@@ -302,16 +299,22 @@ html[data-theme="nike"] .progress-percent {
   padding: 0;
 }
 
-.nav a {
+.header-nav.nav a {
   display: inline-block;
-  padding: 1rem 1.25rem;
+  padding: 0.35rem 0.65rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--header-nav-link);
   text-decoration: none;
   transition: background-color var(--transition);
+  border-radius: 3px;
 }
 
-.nav a:hover {
+html[data-theme="nanpa"] .header-nav.nav a {
+  color: var(--header-top-text);
+}
+
+.header-nav.nav a:hover {
   text-decoration: none;
   background: var(--header-nav-link-hover-bg);
 }
@@ -773,20 +776,22 @@ html[data-theme="nike"] .us-map-label {
 }
 
 @media (max-width: 640px) {
-  .brand {
-    flex-direction: column;
-    align-items: flex-start;
+  .header-bar {
+    padding: 0.35rem 0;
   }
 
-  .header-top-inner {
-    align-items: flex-start;
+  .brand-title {
+    font-size: 0.9rem;
+    white-space: normal;
+  }
+
+  .header-nav {
+    margin-left: 0;
+    order: 3;
+    width: 100%;
   }
 
   .kv-grid {
     grid-template-columns: 1fr;
-  }
-
-  .nav a {
-    padding: 0.85rem 1rem;
   }
 }
