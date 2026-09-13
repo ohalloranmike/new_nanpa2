@@ -18,6 +18,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Interactive zoomable world map on `/international` colored by national phone number length (scroll/pinch zoom, drag to pan, +/- and reset controls; bundled D3 + Natural Earth GeoJSON — no external map tiles at runtime)
 - Supplemental international regions from libphonenumber (245 countries/territories) with NANP area-code context for +1 territories
 - Feature parity with original app routes
+- Zoomable clickable US state map on the home page (bundled D3 + Natural Earth state boundaries) linking to area code maps per state
 
 ## Requirements
 
@@ -246,8 +247,10 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | `static/CanadaACMaps/` | Canada province/territory area-code maps | Canada area code pages |
 | `static/CountryACMaps/` | Caribbean and other NANP country maps | Country browse pages (Jamaica, Bahamas, etc.) |
 | `static/maps/world-countries.geojson` | [Natural Earth](https://www.naturalearthdata.com/) 110m country boundaries (`ISO_A2`, continent/subregion) | International choropleth map; continent and country names for supplemental `intl_country` rows |
+| `static/maps/us-states.geojson` | Natural Earth 110m US state boundaries (filtered to NANPA state codes) | Home page US state map |
 | `static/js/d3.min.js` | D3.js v7 (minified, bundled) | International map rendering |
 | `static/js/international-map.js` | Map interaction (choropleth, legend, zoom/pan, controls, hover, click-through) | `/international` world map |
+| `static/js/us-states-map.js` | US state map (zoom/pan, controls, hover, click-through to `/acmaps`) | Home page |
 
 Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `OfficeCodeDatabaseDefinitions.csv`, `FGD-CIC.csv`, `FGB-CIC.csv`) are legacy reference material from the original app and are not loaded by current routes.
 

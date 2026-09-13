@@ -3,7 +3,7 @@ from starlette.responses import StreamingResponse
 
 from app.constants import CANADA_PT, CANADA_PT_ABBR, COUNTRIES, STATES, US_TERRITORIES
 from app.routes.refresh_stream import refresh_event_stream
-from app.templating import render
+from app.templating import make_url_for, render
 
 router = APIRouter()
 
@@ -14,11 +14,22 @@ def index(request: Request):
     if request.query_params.get("updated") == "1":
         refresh_message = "Data updated successfully from NANPA and CNAC."
 
+    url_for = make_url_for(request)
+    us_map_states = [
+        {
+            "code": code,
+            "name": name,
+            "url": url_for("browse.area_code_maps", state=code),
+        }
+        for code, name in sorted(STATES.items(), key=lambda item: item[1])
+    ]
+
     return render(
         request,
         "index.html",
         {
             "states": STATES,
+            "us_map_states": us_map_states,
             "us_territories": US_TERRITORIES,
             "canada_pt": CANADA_PT,
             "canada_pt_abbr": CANADA_PT_ABBR,

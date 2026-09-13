@@ -625,6 +625,10 @@ button:hover,
   scroll-margin-top: 6rem;
 }
 
+.us-states-map-follow {
+  margin-top: 1rem;
+}
+
 .intl-map-card {
   overflow: hidden;
 }
@@ -709,10 +713,28 @@ html[data-theme="nike"] .intl-map-country {
 }
 
 .intl-map-country:hover,
-.intl-map-country:focus {
+.intl-map-country:focus-visible {
   fill: #fa5400 !important;
   opacity: 1;
+}
+
+.intl-map-country:focus {
   outline: none;
+}
+
+.us-map-label {
+  font-family: var(--font-body);
+  font-weight: 700;
+  fill: #ffffff;
+  stroke: #123a57;
+  stroke-width: 2.5px;
+  paint-order: stroke fill;
+  pointer-events: none;
+  user-select: none;
+}
+
+html[data-theme="nike"] .us-map-label {
+  stroke: #000000;
 }
 
 .intl-map-tooltip {

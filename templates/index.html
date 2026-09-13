@@ -27,7 +27,15 @@
 <section class="card">
     <h2>Browse by Region</h2>
     <h3>US States</h3>
-    <div class="grid-2">
+    <p class="meta">Click a state for area code maps. Scroll to zoom, drag to pan, or use the + / − controls.</p>
+    <div
+        id="us-states-map"
+        class="intl-map"
+        data-geo-url="{{ url_for('static', filename='maps/us-states.geojson') }}?v=1"
+        aria-label="United States map"
+    ></div>
+    <script id="us-states-map-data" type="application/json">{{ us_map_states | tojson }}</script>
+    <div class="grid-2 us-states-map-follow">
         {{ state_form(url_for('browse.area_code_maps'), 'state', 'Area codes by state', states) }}
         {{ state_form(url_for('browse.rate_centers_by_state'), 'rcs', 'Rate centers by state', states) }}
         {{ state_form(url_for('browse.companies_by_state'), 'cs', 'Operating companies by state', states) }}
@@ -81,4 +89,9 @@
         <button type="submit">Search OCN</button>
     </form>
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/us-states-map.js') }}?v=2"></script>
 {% endblock %}
