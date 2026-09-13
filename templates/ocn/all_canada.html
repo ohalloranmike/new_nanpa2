@@ -17,8 +17,8 @@
         <tbody>
         {% for row in rows %}
             <tr>
-                {% for value in row %}
-                    <td>{{ value }}</td>
+                {% for header in headers %}
+                    <td>{{ row[header] }}</td>
                 {% endfor %}
             </tr>
         {% endfor %}

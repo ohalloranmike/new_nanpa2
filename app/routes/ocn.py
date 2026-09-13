@@ -38,12 +38,21 @@ def _group_caoc_by_status(rows, sort: str) -> list[dict]:
 
 
 @router.get("/ocnall", name="ocn.ocn_all")
-def ocn_all(request: Request):
-    rows = fetch_all(
-        "SELECT DISTINCT Company, OCN, State FROM oc "
-        "WHERE Company != '' AND OCN != '' ORDER BY Company, State, OCN"
-    )
-    return render(request, "ocn/all_us.html", {"rows": rows})
+def ocn_all(request: Request, sort: str = Query("company")):
+    if sort == "ocn":
+        rows = fetch_all(
+            "SELECT DISTINCT Company, OCN, State FROM oc "
+            "WHERE Company != '' AND OCN != '' ORDER BY OCN, Company, State"
+        )
+        sort = "ocn"
+    else:
+        rows = fetch_all(
+            "SELECT DISTINCT Company, OCN, State FROM oc "
+            "WHERE Company != '' AND OCN != '' ORDER BY Company, State, OCN"
+        )
+        sort = "company"
+
+    return render(request, "ocn/all_us.html", {"rows": rows, "sort": sort})
 
 
 @router.get("/ocn", name="ocn.ocn_detail")
@@ -85,10 +94,11 @@ def ocn_detail(request: Request, ocn: str = Query("")):
 def canada_ocn_all(request: Request, sort: str = Query("company")):
     if sort == "ocn":
         rows = fetch_all(
-            "SELECT DISTINCT OCN, Company FROM caoc "
-            "WHERE Company != '' AND OCN != '' ORDER BY OCN, Company"
+            "SELECT DISTINCT OCN, Company, Province FROM caoc "
+            "WHERE Company != '' AND OCN != '' AND Province != '' "
+            "ORDER BY OCN, Company, Province"
         )
-        headers = ["OCN", "Company"]
+        headers = ["OCN", "Company", "Province"]
     else:
         rows = fetch_all(
             "SELECT DISTINCT Company, OCN, Province FROM caoc "

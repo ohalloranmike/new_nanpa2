@@ -89,11 +89,9 @@
         <a href="{{ url_for('lists.special_service_numbers') }}">Special service numbers</a>
         <a href="{{ url_for('lists.n11_codes') }}">N11 codes</a>
         <a href="{{ url_for('lists.codes_900') }}">900 codes</a>
-        <a href="{{ url_for('ocn.ocn_all') }}">US operating companies sorted by company</a>
-        <a href="{{ url_for('ocn.canada_ocn_all', sort='company') }}">Canada operating companies (by company)</a>
-        <a href="{{ url_for('ocn.canada_ocn_all', sort='ocn') }}">Canada operating companies (by OCN)</a>
-        <a href="{{ url_for('ocn.canada_exchange_all', sort='npa') }}">Canada exchange areas (by NPA)</a>
-        <a href="{{ url_for('ocn.canada_exchange_all', sort='company') }}">Canada exchange areas (by company)</a>
+        <a href="{{ url_for('ocn.ocn_all', sort='company') }}">US Operating Companies</a>
+        <a href="{{ url_for('ocn.canada_ocn_all', sort='company') }}">Canada Operating Companies</a>
+        <a href="{{ url_for('ocn.canada_exchange_all', sort='npa') }}">Canada Exchange List</a>
     </div>
 
     <form action="{{ url_for('ocn.ocn_detail') }}" method="get" style="margin-top: 1rem;">

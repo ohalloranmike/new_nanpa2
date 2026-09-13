@@ -2,18 +2,44 @@
 {% block content %}
 <section class="card">
     <h2>US Operating Companies</h2>
+    <p>
+        <a href="{{ url_for('ocn.ocn_all', sort='company') }}">Sort by company</a> |
+        <a href="{{ url_for('ocn.ocn_all', sort='ocn') }}">Sort by OCN</a>
+    </p>
     <table class="data-table">
-        <thead><tr><th>Company</th><th>OCN</th><th>State</th></tr></thead>
+        <thead>
+            <tr>
+                {% if sort == 'ocn' %}
+                    <th>OCN</th>
+                    <th>Company</th>
+                    <th>State</th>
+                {% else %}
+                    <th>Company</th>
+                    <th>OCN</th>
+                    <th>State</th>
+                {% endif %}
+            </tr>
+        </thead>
         <tbody>
         {% for row in rows %}
             <tr>
-                <td>
-                    <a href="{{ url_for('browse.company_detail', ocn=row.OCN, companyname=row.Company, state=row.State, country='US') }}">
-                        {{ row.Company }}
-                    </a>
-                </td>
-                <td>{{ row.OCN }}</td>
-                <td>{{ row.State }}</td>
+                {% if sort == 'ocn' %}
+                    <td>{{ row.OCN }}</td>
+                    <td>
+                        <a href="{{ url_for('browse.company_detail', ocn=row.OCN, companyname=row.Company, state=row.State, country='US') }}">
+                            {{ row.Company }}
+                        </a>
+                    </td>
+                    <td>{{ row.State }}</td>
+                {% else %}
+                    <td>
+                        <a href="{{ url_for('browse.company_detail', ocn=row.OCN, companyname=row.Company, state=row.State, country='US') }}">
+                            {{ row.Company }}
+                        </a>
+                    </td>
+                    <td>{{ row.OCN }}</td>
+                    <td>{{ row.State }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>

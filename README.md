@@ -19,6 +19,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Supplemental international regions from libphonenumber (245 countries/territories) with NANP area-code context for +1 territories
 - Feature parity with original app routes
 - Zoomable clickable US state and Canada province/territory maps on the home page (bundled D3 + Natural Earth boundaries) linking to area code maps per region
+- Home **Lists** links for US/Canada operating companies (`/ocnall`, `/canadaocnall`) with on-page sort by company or OCN; Canada exchange list (`/canadaexall`) grouped by CNAC status with sort by NPA-NXX or company
 
 ## Requirements
 
