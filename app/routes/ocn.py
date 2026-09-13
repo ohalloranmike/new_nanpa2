@@ -6,6 +6,14 @@ from app.templating import render
 router = APIRouter()
 
 
+def _list_sort_mode(sort: str) -> str:
+    return "ocn" if (sort or "").strip().lower() == "ocn" else "company"
+
+
+def _rows_as_dicts(rows) -> list[dict]:
+    return [dict(row) for row in rows]
+
+
 def _caoc_npanxx_sort_key(row) -> tuple[str, str]:
     return (row["NPA"] or "", row["COCodeNXX"] or "")
 
@@ -39,20 +47,23 @@ def _group_caoc_by_status(rows, sort: str) -> list[dict]:
 
 @router.get("/ocnall", name="ocn.ocn_all")
 def ocn_all(request: Request, sort: str = Query("company")):
-    if sort == "ocn":
+    sort_mode = _list_sort_mode(sort)
+    if sort_mode == "ocn":
         rows = fetch_all(
-            "SELECT DISTINCT Company, OCN, State FROM oc "
+            "SELECT DISTINCT OCN, Company, State FROM oc "
             "WHERE Company != '' AND OCN != '' ORDER BY OCN, Company, State"
         )
-        sort = "ocn"
     else:
         rows = fetch_all(
-            "SELECT DISTINCT Company, OCN, State FROM oc "
+            "SELECT DISTINCT OCN, Company, State FROM oc "
             "WHERE Company != '' AND OCN != '' ORDER BY Company, State, OCN"
         )
-        sort = "company"
 
-    return render(request, "ocn/all_us.html", {"rows": rows, "sort": sort})
+    return render(
+        request,
+        "ocn/all_us.html",
+        {"rows": _rows_as_dicts(rows), "sort": sort_mode},
+    )
 
 
 @router.get("/ocn", name="ocn.ocn_detail")
@@ -92,22 +103,25 @@ def ocn_detail(request: Request, ocn: str = Query("")):
 
 @router.get("/canadaocnall", name="ocn.canada_ocn_all")
 def canada_ocn_all(request: Request, sort: str = Query("company")):
-    if sort == "ocn":
+    sort_mode = _list_sort_mode(sort)
+    if sort_mode == "ocn":
         rows = fetch_all(
             "SELECT DISTINCT OCN, Company, Province FROM caoc "
             "WHERE Company != '' AND OCN != '' AND Province != '' "
             "ORDER BY OCN, Company, Province"
         )
-        sort = "ocn"
     else:
         rows = fetch_all(
-            "SELECT DISTINCT Company, OCN, Province FROM caoc "
+            "SELECT DISTINCT OCN, Company, Province FROM caoc "
             "WHERE Company != '' AND OCN != '' AND Province != '' "
             "ORDER BY Company, Province, OCN"
         )
-        sort = "company"
 
-    return render(request, "ocn/all_canada.html", {"rows": rows, "sort": sort})
+    return render(
+        request,
+        "ocn/all_canada.html",
+        {"rows": _rows_as_dicts(rows), "sort": sort_mode},
+    )
 
 
 @router.get("/canadaexall", name="ocn.canada_exchange_all")
