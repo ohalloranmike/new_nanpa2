@@ -121,6 +121,15 @@ Or double-click [`start_nanpa2.bat`](start_nanpa2.bat) in the project folder. It
 
 To launch from the Desktop, create a shortcut to `start_nanpa2.bat` (**Send to → Desktop (create shortcut)**). Do not copy the bat file itself to the Desktop, because it needs to run from the project folder where `.venv` lives.
 
+**Linux (e.g. Linux Mint)** — from the project directory (for example `~/PycharmProjects/new_nanpa2`):
+
+```bash
+chmod +x start_nanpa2.sh   # once, after clone
+./start_nanpa2.sh
+```
+
+Same behavior as the Windows launcher: uses `.venv/bin/python`, frees the configured port (`fuser` or `lsof`), then runs `run.py`. Override the port with `NANPA_PORT=8003 ./start_nanpa2.sh` if needed.
+
 Or with Uvicorn directly:
 
 ```powershell
@@ -216,6 +225,7 @@ nanpa2/
     settings.json        # Local Python interpreter path
   run.py
   start_nanpa2.bat     # Double-click Windows launcher
+  start_nanpa2.sh      # Linux/macOS launcher (chmod +x first)
   refresh_data.py
   fetch_nanpa_maps.py  # Optional US state AC map GIF download (see below)
   requirements.txt
