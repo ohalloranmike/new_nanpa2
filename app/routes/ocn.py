@@ -6,6 +6,37 @@ from app.templating import render
 router = APIRouter()
 
 
+def _caoc_npanxx_sort_key(row) -> tuple[str, str]:
+    return (row["NPA"] or "", row["COCodeNXX"] or "")
+
+
+def _caoc_company_sort_key(row) -> tuple[str, str, str, str]:
+    return (
+        (row["Company"] or "").casefold(),
+        row["OCN"] or "",
+        row["NPA"] or "",
+        row["COCodeNXX"] or "",
+    )
+
+
+def _group_caoc_by_status(rows, sort: str) -> list[dict]:
+    order: list[str] = []
+    grouped: dict[str, list] = {}
+    for row in rows:
+        status = (row["Status"] or "").strip() or "Unknown"
+        if status not in grouped:
+            grouped[status] = []
+            order.append(status)
+        grouped[status].append(row)
+    row_sort_key = _caoc_company_sort_key if sort == "company" else _caoc_npanxx_sort_key
+    sections = []
+    for status in order:
+        rows_for_status = grouped[status]
+        rows_for_status.sort(key=row_sort_key)
+        sections.append({"status": status, "rows": rows_for_status})
+    return sections
+
+
 @router.get("/ocnall", name="ocn.ocn_all")
 def ocn_all(request: Request):
     rows = fetch_all(
@@ -76,16 +107,22 @@ def canada_exchange_all(request: Request, sort: str = Query("npa")):
         rows = fetch_all(
             "SELECT ExchangeArea, Company, OCN, NPA, COCodeNXX, Status, Remarks FROM caoc "
             "WHERE Company != '' AND OCN != '' "
-            "ORDER BY ExchangeArea, Company, OCN, NPA, COCodeNXX, Status"
+            "ORDER BY Status"
         )
-        headers = ["ExchangeArea", "Company", "OCN", "NPA", "COCodeNXX", "Status", "Remarks"]
+        sort = "company"
     else:
         rows = fetch_all(
             "SELECT ExchangeArea, NPA, COCodeNXX, Company, OCN, Status, Remarks FROM caoc "
             "WHERE Company != '' AND OCN != '' "
-            "ORDER BY ExchangeArea, NPA, COCodeNXX, Company, OCN, Status"
+            "ORDER BY Status"
         )
-        headers = ["ExchangeArea", "NPA", "COCodeNXX", "Company", "OCN", "Status", "Remarks"]
         sort = "npa"
 
-    return render(request, "ocn/exchanges_canada.html", {"rows": rows, "headers": headers, "sort": sort})
+    return render(
+        request,
+        "ocn/exchanges_canada.html",
+        {
+            "status_sections": _group_caoc_by_status(rows, sort),
+            "sort": sort,
+        },
+    )
