@@ -62,6 +62,24 @@
         return key ? byRegion.get(key) : null;
       }
 
+      function groupKeyForFeature(feature) {
+        var region = regionForFeature(feature);
+        return region ? String(region.region || region.name || "") : null;
+      }
+
+      var regionsLayer;
+
+      function setGroupHover(groupKey) {
+        if (!regionsLayer) {
+          return;
+        }
+        regionsLayer
+          .selectAll("path.canada-map-region")
+          .classed("intl-map-country--group-hover", function (feature) {
+            return groupKey && groupKeyForFeature(feature) === groupKey;
+          });
+      }
+
       function featureLabel(feature) {
         var props = feature.properties || {};
         return props.code || "";
@@ -127,7 +145,7 @@
             features: features,
           });
 
-          var regionsLayer = mapLayer.append("g").attr("class", "canada-map-regions");
+          regionsLayer = mapLayer.append("g").attr("class", "canada-map-regions");
           var labelsLayer = mapLayer.append("g").attr("class", "canada-map-labels");
 
           regionsLayer
@@ -140,6 +158,19 @@
             .attr("tabindex", function (feature) {
               return regionForFeature(feature) ? 0 : -1;
             })
+            .on("mouseover", function (event, feature) {
+              var region = regionForFeature(feature);
+              if (region) {
+                setGroupHover(groupKeyForFeature(feature));
+                showTooltip(
+                  event,
+                  "<strong>" + region.code + "</strong> " + region.name + "<br>Area code maps"
+                );
+              } else {
+                setGroupHover(null);
+                showTooltip(event, "No data for this region");
+              }
+            })
             .on("mousemove", function (event, feature) {
               var region = regionForFeature(feature);
               if (region) {
@@ -147,14 +178,42 @@
                   event,
                   "<strong>" + region.code + "</strong> " + region.name + "<br>Area code maps"
                 );
-              } else {
-                showTooltip(event, "No data for this region");
               }
             })
-            .on("mouseleave", hideTooltip)
+            .on("mouseout", function (event) {
+              var related = event.relatedTarget;
+              if (
+                related &&
+                related.closest &&
+                related.closest("#canada-provinces-map path.canada-map-region")
+              ) {
+                return;
+              }
+              setGroupHover(null);
+              hideTooltip();
+            })
+            .on("focus", function (event, feature) {
+              if (regionForFeature(feature)) {
+                setGroupHover(groupKeyForFeature(feature));
+              }
+            })
+            .on("blur", function () {
+              window.requestAnimationFrame(function () {
+                var active = document.activeElement;
+                var activeKey = null;
+                if (active && active.classList.contains("canada-map-region")) {
+                  var datum = d3.select(active).datum();
+                  if (datum) {
+                    activeKey = groupKeyForFeature(datum);
+                  }
+                }
+                setGroupHover(activeKey);
+              });
+            })
             .on("click", function (event, feature) {
               var region = regionForFeature(feature);
               event.currentTarget.blur();
+              setGroupHover(null);
               hideTooltip();
               if (region && region.url) {
                 window.location.href = region.url;
@@ -171,20 +230,38 @@
               }
             });
 
+          var labelFeatures = [];
+          var labelGroupsSeen = new Set();
+          features
+            .filter(function (feature) {
+              return regionForFeature(feature);
+            })
+            .forEach(function (feature) {
+              feature._mapArea = path.area(feature);
+            });
+          features
+            .filter(function (feature) {
+              return regionForFeature(feature);
+            })
+            .sort(function (a, b) {
+              return (b._mapArea || 0) - (a._mapArea || 0);
+            })
+            .forEach(function (feature) {
+              var groupKey = groupKeyForFeature(feature);
+              if (labelGroupsSeen.has(groupKey)) {
+                return;
+              }
+              labelGroupsSeen.add(groupKey);
+              labelFeatures.push(feature);
+            });
+
           labelsLayer
             .selectAll("text")
-            .data(
-              features.filter(function (feature) {
-                return regionForFeature(feature);
-              })
-            )
+            .data(labelFeatures)
             .join("text")
             .attr("class", "us-map-label")
             .attr("text-anchor", "middle")
             .attr("dy", "0.35em")
-            .each(function (feature) {
-              feature._mapArea = path.area(feature);
-            })
             .attr("transform", function (feature) {
               var centroid = path.centroid(feature);
               return "translate(" + centroid[0] + "," + centroid[1] + ")";

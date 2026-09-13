@@ -713,7 +713,8 @@ html[data-theme="nike"] .intl-map-country {
 }
 
 .intl-map-country:hover,
-.intl-map-country:focus-visible {
+.intl-map-country:focus-visible,
+.intl-map-country--group-hover {
   fill: #fa5400 !important;
   opacity: 1;
 }

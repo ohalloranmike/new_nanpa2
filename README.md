@@ -252,7 +252,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | `static/js/d3.min.js` | D3.js v7 (minified, bundled) | International map rendering |
 | `static/js/international-map.js` | Map interaction (choropleth, legend, zoom/pan, controls, hover, click-through) | `/international` world map |
 | `static/js/us-states-map.js` | US state map (zoom/pan, controls, hover, click-through to `/acmaps`) | Home page |
-| `static/js/canada-provinces-map.js` | Canada province/territory map (zoom/pan, controls, hover, click-through to `/acmaps`) | Home page |
+| `static/js/canada-provinces-map.js` | Canada province/territory map (zoom/pan, controls, grouped hover for multi-polygon browse regions such as YT-NWT-NU and NS-PEI, click-through to `/acmaps`) | Home page |
 
 Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `OfficeCodeDatabaseDefinitions.csv`, `FGD-CIC.csv`, `FGB-CIC.csv`) are legacy reference material from the original app and are not loaded by current routes.
 
