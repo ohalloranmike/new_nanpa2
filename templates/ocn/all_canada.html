@@ -9,17 +9,37 @@
     <table class="data-table">
         <thead>
             <tr>
-                {% for header in headers %}
-                    <th>{{ header }}</th>
-                {% endfor %}
+                {% if sort == 'ocn' %}
+                    <th>OCN</th>
+                    <th>Company</th>
+                    <th>Province</th>
+                {% else %}
+                    <th>Company</th>
+                    <th>OCN</th>
+                    <th>Province</th>
+                {% endif %}
             </tr>
         </thead>
         <tbody>
         {% for row in rows %}
             <tr>
-                {% for header in headers %}
-                    <td>{{ row[header] }}</td>
-                {% endfor %}
+                {% if sort == 'ocn' %}
+                    <td>{{ row.OCN }}</td>
+                    <td>
+                        <a href="{{ url_for('browse.company_detail', ocn=row.OCN, companyname=row.Company, state=row.Province, country='CANADA') }}">
+                            {{ row.Company }}
+                        </a>
+                    </td>
+                    <td>{{ row.Province }}</td>
+                {% else %}
+                    <td>
+                        <a href="{{ url_for('browse.company_detail', ocn=row.OCN, companyname=row.Company, state=row.Province, country='CANADA') }}">
+                            {{ row.Company }}
+                        </a>
+                    </td>
+                    <td>{{ row.OCN }}</td>
+                    <td>{{ row.Province }}</td>
+                {% endif %}
             </tr>
         {% endfor %}
         </tbody>

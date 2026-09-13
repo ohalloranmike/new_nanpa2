@@ -98,17 +98,16 @@ def canada_ocn_all(request: Request, sort: str = Query("company")):
             "WHERE Company != '' AND OCN != '' AND Province != '' "
             "ORDER BY OCN, Company, Province"
         )
-        headers = ["OCN", "Company", "Province"]
+        sort = "ocn"
     else:
         rows = fetch_all(
             "SELECT DISTINCT Company, OCN, Province FROM caoc "
             "WHERE Company != '' AND OCN != '' AND Province != '' "
             "ORDER BY Company, Province, OCN"
         )
-        headers = ["Company", "OCN", "Province"]
         sort = "company"
 
-    return render(request, "ocn/all_canada.html", {"rows": rows, "headers": headers, "sort": sort})
+    return render(request, "ocn/all_canada.html", {"rows": rows, "sort": sort})
 
 
 @router.get("/canadaexall", name="ocn.canada_exchange_all")
