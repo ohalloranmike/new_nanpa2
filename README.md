@@ -88,6 +88,28 @@ Force download and rebuild regardless of file age:
 .venv\Scripts\python.exe refresh_data.py --force
 ```
 
+### US state area-code map GIFs (optional, manual review)
+
+Tabular data refresh does **not** update map images under `static/USACMaps/`. To download **US state** GIFs from [nanpa.com](https://www.nanpa.com) inline map URLs into a review folder (same `USACMaps/` names as production), run:
+
+```powershell
+.venv\Scripts\python.exe fetch_nanpa_maps.py
+```
+
+One state only:
+
+```powershell
+.venv\Scripts\python.exe fetch_nanpa_maps.py --state TX
+```
+
+Dry-run (print URLs only):
+
+```powershell
+.venv\Scripts\python.exe fetch_nanpa_maps.py --state CA --dry-run
+```
+
+Files land in `map_fetch_review/USACMaps/` (gitignored) with a `manifest.json` summary. Copy approved GIFs into `static/USACMaps/`. The site typically provides the main `{ST}.gif` only; `-inset1` / `-inset2` files are often absent and listed as `missing` in the manifest.
+
 ## Run app
 
 ```powershell
@@ -194,6 +216,7 @@ nanpa2/
   run.py
   start_nanpa2.bat     # Double-click Windows launcher
   refresh_data.py
+  fetch_nanpa_maps.py  # Optional US state AC map GIF download (see below)
   requirements.txt
 ```
 
@@ -258,7 +281,7 @@ Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `Offic
 
 ## Notes
 
-- Map images and curated CSV lists are stored under `static/`.
+- Map images and curated CSV lists are stored under `static/`. Optional `fetch_nanpa_maps.py` downloads main US `{ST}.gif` files into gitignored `map_fetch_review/`; inset GIFs are not on nanpa.com and stay manual.
 - US state map sections only render images that exist on disk (`app/maps.py` → `us_state_map_images`); states without inset GIFs do not show inset placeholders or 404 broken images.
 - Generated NANPA download files and `pn.db` are gitignored.
 - `international_countries.json` is downloaded with other source files and is also gitignored.
