@@ -23,6 +23,15 @@ def index(request: Request):
         }
         for code, name in sorted(STATES.items(), key=lambda item: item[1])
     ]
+    canada_map_regions = [
+        {
+            "code": abbr,
+            "name": region_name,
+            "region": region_name,
+            "url": url_for("browse.area_code_maps", state=region_name),
+        }
+        for region_name, abbr in sorted(CANADA_PT.items(), key=lambda item: item[0])
+    ]
 
     return render(
         request,
@@ -30,6 +39,7 @@ def index(request: Request):
         {
             "states": STATES,
             "us_map_states": us_map_states,
+            "canada_map_regions": canada_map_regions,
             "us_territories": US_TERRITORIES,
             "canada_pt": CANADA_PT,
             "canada_pt_abbr": CANADA_PT_ABBR,

@@ -25,8 +25,7 @@
 </section>
 
 <section class="card">
-    <h2>Browse by Region</h2>
-    <h3>US States</h3>
+    <h2>Browse by State</h2>
     <p class="meta">Click a state for area code maps. Scroll to zoom, drag to pan, or use the + / − controls.</p>
     <div
         id="us-states-map"
@@ -40,16 +39,30 @@
         {{ state_form(url_for('browse.rate_centers_by_state'), 'rcs', 'Rate centers by state', states) }}
         {{ state_form(url_for('browse.companies_by_state'), 'cs', 'Operating companies by state', states) }}
     </div>
+</section>
 
-    <h3>US Territories</h3>
+<section class="card">
+    <h2>Canada</h2>
+    <p class="meta">Click a province or territory for area code maps. Scroll to zoom, drag to pan, or use the + / − controls.</p>
+    <div
+        id="canada-provinces-map"
+        class="intl-map"
+        data-geo-url="{{ url_for('static', filename='maps/canada-provinces.geojson') }}?v=1"
+        aria-label="Canada provinces and territories map"
+    ></div>
+    <script id="canada-provinces-map-data" type="application/json">{{ canada_map_regions | tojson }}</script>
+    <div class="us-states-map-follow">
+        {{ state_form(url_for('browse.area_code_maps'), 'state', 'Area codes by province/territory', canada_pt) }}
+    </div>
+</section>
+
+<section class="card">
+    <h2>US Territories</h2>
     <div class="grid-2">
         {{ state_form(url_for('browse.area_code_maps'), 'state', 'Area codes by territory', us_territories) }}
         {{ state_form(url_for('browse.rate_centers_by_state'), 'rcs', 'Rate centers by territory', us_territories) }}
         {{ state_form(url_for('browse.companies_by_state'), 'cs', 'Operating companies by territory', us_territories) }}
     </div>
-
-    <h3>Canada Provinces / Territories</h3>
-    {{ state_form(url_for('browse.area_code_maps'), 'state', 'Area codes by province/territory', canada_pt) }}
 </section>
 
 <section class="card">
@@ -94,4 +107,5 @@
 {% block extra_scripts %}
 <script src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/us-states-map.js') }}?v=2"></script>
+<script src="{{ url_for('static', filename='js/canada-provinces-map.js') }}?v=1"></script>
 {% endblock %}

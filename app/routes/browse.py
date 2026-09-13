@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Query, Request
 
-from app.constants import CANADA_PT, STATES, US_STATE_QUERY_ALIASES, US_TERRITORIES
+from app.constants import CANADA_AC_LOCATION, CANADA_PT, STATES, US_STATE_QUERY_ALIASES, US_TERRITORIES
 from app.database import fetch_all
 from app.maps import canada_map_images, country_map_for_location, territory_map_for_code, us_state_map_images
 from app.templating import render
@@ -227,7 +227,8 @@ def area_code_maps(request: Request, state: str = Query("")):
 
 
 def _npas_for_location(location: str) -> list[str]:
-    rows = fetch_all("SELECT NPA_ID FROM ac WHERE LOCATION = ? ORDER BY NPA_ID", (location,))
+    ac_location = CANADA_AC_LOCATION.get(location, location)
+    rows = fetch_all("SELECT NPA_ID FROM ac WHERE LOCATION = ? ORDER BY NPA_ID", (ac_location,))
     return [row["NPA_ID"] for row in rows]
 
 

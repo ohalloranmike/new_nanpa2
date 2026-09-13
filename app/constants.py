@@ -75,10 +75,15 @@ CANADA_PT_ABBR = {
 
 CANADA_PT = {value: key for key, value in CANADA_PT_ABBR.items()}
 
+# Browse-region names in CANADA_PT vs LOCATION strings in NANPA npa_report (ac table).
+CANADA_AC_LOCATION = {
+    "YUKON-NW TERR. - NUNAVUT": "NORTHWEST TERRITORIES -YUKON - NUNAVUT",
+}
+
 COUNTRIES = {
     "ANGUILLA": "Anguilla",
     "ANTIGUA/BARBUDA": "Antigua and Barbuda",
-    "BAHAMAS": "Bahamas",
+    "BAHAMAS": "The Bahamas",
     "BARBADOS": "Barbados",
     "BERMUDA": "Bermuda",
     "BRITISH VIRGIN ISLANDS": "British Virgin Islands",
