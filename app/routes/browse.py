@@ -12,6 +12,13 @@ def _normalize_us_state(state: str) -> str:
     return US_STATE_QUERY_ALIASES.get(state.upper(), state.upper())
 
 
+def _company_sort_mode(sort: str) -> str:
+    key = (sort or "").strip().lower()
+    if key in ("exchange", "rate_center", "ratecenter", "rate-center"):
+        return "exchange"
+    return "npanxx"
+
+
 @router.get("/compstate", name="browse.companies_by_state")
 def companies_by_state(request: Request, cs: str = Query("")):
     state = _normalize_us_state(cs.strip())
@@ -109,6 +116,7 @@ def company_detail(
     companyname: str = Query(""),
     state: str = Query(""),
     country: str = Query(""),
+    sort: str = Query(""),
 ):
     ocn = ocn.strip()
     company_name = companyname.strip()
@@ -117,14 +125,16 @@ def company_detail(
     if not ocn or not country:
         return render(request, "error.html", {"error": "Missing company parameters."}, 400)
 
+    sort_mode = _company_sort_mode(sort) if sort.strip() else "npanxx"
+
     if country == "US":
         state = _normalize_us_state(state)
-        by_npanxx = fetch_all(
-            "SELECT NPANXX, RateCenter FROM oc WHERE OCN = ? AND State = ? ORDER BY NPANXX",
-            (ocn, state),
-        )
-        by_rate_center = fetch_all(
-            "SELECT NPANXX, RateCenter FROM oc WHERE OCN = ? AND State = ? ORDER BY RateCenter, NPANXX",
+        if sort_mode == "exchange":
+            order = "ORDER BY RateCenter, NPANXX"
+        else:
+            order = "ORDER BY NPANXX"
+        rows = fetch_all(
+            f"SELECT NPANXX, RateCenter FROM oc WHERE OCN = ? AND State = ? {order}",
             (ocn, state),
         )
         return render(
@@ -134,18 +144,18 @@ def company_detail(
                 "ocn": ocn,
                 "company_name": company_name,
                 "state": state,
-                "by_npanxx": by_npanxx,
-                "by_rate_center": by_rate_center,
+                "rows": rows,
+                "sort": sort_mode,
             },
         )
 
     if country == "CANADA":
-        by_npanxx = fetch_all(
-            "SELECT NPA, COCodeNXX, ExchangeArea FROM caoc WHERE OCN = ? ORDER BY NPA, COCodeNXX",
-            (ocn,),
-        )
-        by_exchange = fetch_all(
-            "SELECT NPA, COCodeNXX, ExchangeArea FROM caoc WHERE OCN = ? ORDER BY ExchangeArea, NPA, COCodeNXX",
+        if sort_mode == "exchange":
+            order = "ORDER BY ExchangeArea, NPA, COCodeNXX"
+        else:
+            order = "ORDER BY NPA, COCodeNXX"
+        rows = fetch_all(
+            f"SELECT NPA, COCodeNXX, ExchangeArea FROM caoc WHERE OCN = ? {order}",
             (ocn,),
         )
         return render(
@@ -155,8 +165,8 @@ def company_detail(
                 "ocn": ocn,
                 "company_name": company_name,
                 "state": state,
-                "by_npanxx": by_npanxx,
-                "by_exchange": by_exchange,
+                "rows": rows,
+                "sort": sort_mode,
             },
         )
 

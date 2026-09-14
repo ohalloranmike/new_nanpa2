@@ -530,7 +530,8 @@ button:hover,
   font-size: 0.85em;
 }
 
-.intl-countries-card {
+.intl-countries-card,
+#company-codes {
   scroll-margin-top: 3.5rem;
 }
 
