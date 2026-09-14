@@ -493,10 +493,75 @@ button:hover,
   background: var(--accent);
 }
 
+.data-table-wrap {
+  overflow-x: auto;
+  margin-top: 0.75rem;
+  max-width: 100%;
+}
+
+.data-table-dual-scroll {
+  margin-top: 0.75rem;
+}
+
+.data-table-dual-scroll .data-table-scroll-top,
+.data-table-dual-scroll .data-table-scroll-body {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
+.data-table-dual-scroll .data-table-scroll-top {
+  height: 14px;
+  margin-bottom: 0.35rem;
+}
+
+.data-table-dual-scroll .data-table-scroll-spacer {
+  height: 1px;
+  pointer-events: none;
+}
+
+.data-table-dual-scroll .data-table {
+  width: max-content;
+  min-width: 100%;
+}
+
+.site-main .container:has(> #aclist) {
+  width: min(calc(100vw - 2rem), 100%);
+  max-width: none;
+}
+
+#aclist .data-table th,
+#aclist .data-table td {
+  white-space: nowrap;
+}
+
 .data-table {
   width: 100%;
   border-collapse: collapse;
   font-size: 0.95rem;
+}
+
+.data-table.data-table--pin-first-col {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.data-table.data-table--pin-first-col th:first-child,
+.data-table.data-table--pin-first-col td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: var(--surface);
+  box-shadow: 2px 0 6px rgba(15, 23, 42, 0.08);
+}
+
+.data-table.data-table--pin-first-col thead th:first-child {
+  z-index: 2;
+  background: var(--accent);
+}
+
+.data-table.data-table--pin-first-col tr:nth-child(even) td:first-child {
+  background: var(--table-stripe);
 }
 
 .data-table th,
@@ -531,7 +596,12 @@ button:hover,
 }
 
 .intl-countries-card,
-#company-codes {
+#company-codes,
+#rate-center-codes,
+#aclist,
+#canada-exall,
+#canada-ocn-list,
+#us-ocn-list {
   scroll-margin-top: 3.5rem;
 }
 

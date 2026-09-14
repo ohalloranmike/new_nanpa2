@@ -1,42 +1,111 @@
 import csv
 from pathlib import Path
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Query, Request
 
-from app.database import fetch_all
+from app.database import fetch_all, row_to_dict
 from app.templating import render
 
 router = APIRouter()
 
 
+_ACLIST_STATUS_WHERE = {
+    "assigned": "WHERE assigned = 'Yes'",
+    "reserved": "WHERE assigned != 'Yes' AND reserved = 'Yes'",
+    "unassigned": "WHERE assigned != 'Yes' AND (reserved IS NULL OR reserved != 'Yes')",
+}
+
+_ACLIST_STATUS_LABELS = {
+    "all": "All",
+    "assigned": "Assigned",
+    "reserved": "Reserved",
+    "unassigned": "Unassigned and not reserved",
+}
+
+# (sort query key, column header label, SQLite column name)
+_ACLIST_COLUMNS: list[tuple[str, str, str]] = [
+    ("npa", "NPA", "NPA_ID"),
+    ("type_of_code", "Type of code", "type_of_code"),
+    ("assignable", "Assignable", "ASSIGNABLE"),
+    ("explanation", "Explanation", "EXPLANATION"),
+    ("reserved", "Reserved", "RESERVED"),
+    ("assigned", "Assigned", "ASSIGNED"),
+    ("assignment_dt", "Assignment date", "ASSIGNMENT_DT"),
+    ("use", "Use", "USE"),
+    ("location", "Location", "LOCATION"),
+    ("country", "Country", "COUNTRY"),
+    ("in_service", "In service", "IN_SERVICE"),
+    ("in_service_dt", "In service date", "IN_SERVICE_DT"),
+    ("status", "Status", "STATUS"),
+    ("planning_letters", "Planning letters", "PLANNING_LETTERS"),
+    ("notes", "Notes", "NOTES"),
+    ("overlay", "Overlay", "OVERLAY"),
+    ("overlay_complex", "Overlay complex", "OVERLAY_COMPLEX"),
+    ("parent_npa", "Parent NPA", "PARENT_NPA_ID"),
+    ("service", "Service", "SERVICE"),
+    ("time_zone", "Time zone", "TIME_ZONE"),
+    ("area_served", "Area served", "AREA_SERVED"),
+    ("map", "Map", "MAP"),
+    ("in_jeopardy", "In jeopardy", "IN_JEOPARDY"),
+    ("relief_planning", "Relief planning", "RELIEF_PLANNING_IN_PROGRESS"),
+    ("home_npa_local", "Home NPA local", "HOME_NPA_LOCAL_CALLS"),
+    ("home_npa_toll", "Home NPA toll", "HOME_NPA_TOLL_CALLS"),
+    ("foreign_npa_local", "Foreign NPA local", "FOREIGN_NPA_LOCAL_CALLS"),
+    ("foreign_npa_toll", "Foreign NPA toll", "FOREIGN_NPA_TOLL_CALLS"),
+    ("perm_hnpa_local", "Perm HNPA local", "PERM_HNPA_LOCAL_CALLS"),
+    ("perm_hnpa_toll", "Perm HNPA toll", "PERM_HNPA_TOLL_CALLS"),
+    ("perm_fnpa_local", "Perm FNPA local", "PERM_HNPA_FOREIGN_LOCAL_CALLS"),
+    ("dialing_plan_notes", "Dialing plan notes", "DIALING_PLAN_NOTES"),
+]
+
+_ACLIST_SORT_SQL = {key: f'"{col}" COLLATE NOCASE' if col != "NPA_ID" else col for key, _, col in _ACLIST_COLUMNS}
+# type_of_code is lowercase in schema
+_ACLIST_SORT_SQL["type_of_code"] = "type_of_code COLLATE NOCASE"
+_ACLIST_SORT_KEYS = set(_ACLIST_SORT_SQL)
+
+
+def _aclist_sort(sort: str, direction: str) -> tuple[str, str]:
+    sort_key = (sort or "npa").strip().lower()
+    if sort_key not in _ACLIST_SORT_KEYS:
+        sort_key = "npa"
+    sort_dir = "desc" if (direction or "").strip().lower() == "desc" else "asc"
+    return sort_key, sort_dir
+
+
 @router.get("/aclist", name="lists.area_code_list")
-def area_code_list(request: Request):
+def area_code_list(
+    request: Request,
+    status: str = Query("all"),
+    sort: str | None = Query(None),
+    dir: str | None = Query(None),
+):
+    status_key = (status or "all").strip().lower()
+    if status_key not in _ACLIST_STATUS_WHERE and status_key != "all":
+        status_key = "all"
+
+    if "sort" in request.query_params:
+        sort_key, sort_dir = _aclist_sort(sort or "npa", dir or "asc")
+    else:
+        sort_key, sort_dir = "npa", "asc"
+
+    where = _ACLIST_STATUS_WHERE.get(status_key, "")
+    order_sql = _ACLIST_SORT_SQL[sort_key]
+    tie = "" if sort_key == "npa" else ", NPA_ID ASC"
     rows = fetch_all(
-        "SELECT NPA_ID, type_of_code, location, country, assigned, reserved, in_service "
-        "FROM ac ORDER BY NPA_ID"
+        f"SELECT * FROM ac {where} ORDER BY {order_sql} {sort_dir.upper()}{tie}"
     )
-    assigned, reserved, unassigned = [], [], []
-    for row in rows:
-        item = {
-            "NPA_ID": row["NPA_ID"],
-            "type_of_code": row["type_of_code"],
-            "location": row["location"],
-            "country": row["country"],
-        }
-        if row["assigned"] == "Yes":
-            assigned.append(item)
-        elif row["reserved"] == "Yes":
-            reserved.append(item)
-        else:
-            unassigned.append(item)
+    items = [row_to_dict(row) for row in rows]
 
     return render(
         request,
         "lists/aclist.html",
         {
-            "assigned": assigned,
-            "reserved": reserved,
-            "unassigned": unassigned,
+            "items": items,
+            "columns": _ACLIST_COLUMNS,
+            "status": status_key,
+            "status_labels": _ACLIST_STATUS_LABELS,
+            "sort": sort_key,
+            "sort_dir": sort_dir,
         },
     )
 

@@ -1,34 +1,71 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card">
-    <h2>Canada exchange areas</h2>
-    <p class="meta">Office codes from CNAC, grouped by status (same layout as the area code list).</p>
-    <p>
-        Sort by:
-        <a href="{{ url_for('ocn.canada_exchange_all', sort='npa') }}">NPA</a>
-        or
-        <a href="{{ url_for('ocn.canada_exchange_all', sort='company') }}">Company</a>
-    </p>
-</section>
-
-{% for section in status_sections %}
-<hr class="card-separator" aria-hidden="true">
-
-<section class="card">
-    <h2>{{ section.status }}</h2>
-    {% if section.rows %}
-        {% for row in section.rows %}
-            <p>
-                <a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPA ~ '-' ~ row.COCodeNXX}) }}">
-                    <strong>{{ row.NPA }}-{{ row.COCodeNXX }}</strong>
-                </a>
-                — {{ row.Company }} (OCN {{ row.OCN }}), {{ row.ExchangeArea }}
-                {% if row.Remarks %}<span class="meta"> — {{ row.Remarks }}</span>{% endif %}
-            </p>
-        {% endfor %}
+<section class="card" id="canada-exall">
+    <h2>Canada Exchange List</h2>
+    <p class="meta">Office codes from CNAC. Filter by status; click a column header to sort.</p>
+    <form method="get" action="{{ url_for('ocn.canada_exchange_all') }}#canada-exall">
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <input type="hidden" name="dir" value="{{ sort_dir }}">
+        <label for="status">Status</label>
+        <select id="status" name="status" onchange="this.form.submit()">
+            {% for key, label in status_labels.items() %}
+                <option value="{{ key }}" {% if key == status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <p class="meta" style="margin-top: 1rem;">{{ items|length }} exchange{% if items|length != 1 %}s{% endif %}</p>
+    {% if items %}
+        <div class="data-table-wrap">
+            <table class="data-table data-table--sortable">
+                <thead>
+                    <tr>
+                        {% for sort_key, label, field in columns %}
+                            {% if sort_key %}
+                                {% if sort == sort_key and sort_dir == 'asc' %}
+                                    {% set next_dir = 'desc' %}
+                                {% else %}
+                                    {% set next_dir = 'asc' %}
+                                {% endif %}
+                                <th scope="col">
+                                    <a
+                                        class="data-table-sort{% if sort == sort_key %} data-table-sort--active{% endif %}"
+                                        href="{{ url_for('ocn.canada_exchange_all', sort=sort_key, dir=next_dir, status=status) }}#canada-exall"
+                                    >
+                                        {{ label }}
+                                        {% if sort == sort_key %}
+                                            <span class="data-table-sort-indicator" aria-hidden="true">{{ '↑' if sort_dir == 'asc' else '↓' }}</span>
+                                        {% endif %}
+                                    </a>
+                                </th>
+                            {% else %}
+                                <th scope="col">{{ label }}</th>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in items %}
+                    <tr>
+                        {% for sort_key, label, field in columns %}
+                            <td>
+                                {% if sort_key == 'npa' and row.NPA and row.COCodeNXX %}
+                                    <a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPA ~ '-' ~ row.COCodeNXX}) }}">{{ row[field] }}</a>
+                                {% elif sort_key is none and field == 'COCodeNXX' and row.NPA and row.COCodeNXX %}
+                                    <a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPA ~ '-' ~ row.COCodeNXX}) }}">{{ row[field] }}</a>
+                                {% elif sort_key == 'company' and row.Company and row.OCN %}
+                                    <a href="{{ url_for('browse.company_detail', ocn=row.OCN, companyname=row.Company, state=row.Province, country='CANADA') }}">{{ row[field] }}</a>
+                                {% else %}
+                                    {{ row[field] or '' }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
     {% else %}
-        <p>No exchanges in this status.</p>
+        <p>No exchanges match this filter.</p>
     {% endif %}
 </section>
-{% endfor %}
 {% endblock %}

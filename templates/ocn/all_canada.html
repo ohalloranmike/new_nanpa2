@@ -1,17 +1,33 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card">
+<section class="card" id="canada-ocn-list">
     <h2>Canada Operating Companies</h2>
-    <p>
-        <a href="{{ url_for('ocn.canada_ocn_all', sort='company') }}">Sort by company</a> |
-        <a href="{{ url_for('ocn.canada_ocn_all', sort='ocn') }}">Sort by OCN</a>
-    </p>
-    <table class="data-table">
+    <table class="data-table data-table--sortable">
         <thead>
             <tr>
-                <th>OCN</th>
-                <th>Company</th>
-                <th>Province</th>
+                {% set columns = [
+                    ('ocn', 'OCN'),
+                    ('company', 'Company'),
+                    ('province', 'Province'),
+                ] %}
+                {% for column, label in columns %}
+                    {% if sort == column and sort_dir == 'asc' %}
+                        {% set next_dir = 'desc' %}
+                    {% else %}
+                        {% set next_dir = 'asc' %}
+                    {% endif %}
+                    <th scope="col">
+                        <a
+                            class="data-table-sort{% if sort == column %} data-table-sort--active{% endif %}"
+                            href="{{ url_for('ocn.canada_ocn_all', sort=column, dir=next_dir) }}#canada-ocn-list"
+                        >
+                            {{ label }}
+                            {% if sort == column %}
+                                <span class="data-table-sort-indicator" aria-hidden="true">{{ '↑' if sort_dir == 'asc' else '↓' }}</span>
+                            {% endif %}
+                        </a>
+                    </th>
+                {% endfor %}
             </tr>
         </thead>
         <tbody>

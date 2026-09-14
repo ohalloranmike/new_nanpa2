@@ -1,35 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card">
+<section class="card" id="rate-center-codes">
     <h2>Rate Center: {{ rate_center }} ({{ state }})</h2>
-    <h3>By NPANXX</h3>
-    <table class="data-table">
-        <thead><tr><th>NPANXX</th><th>Company</th></tr></thead>
-        <tbody>
-        {% for row in by_npanxx %}
-            <tr>
-                <td><a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPANXX}) }}">{{ row.NPANXX }}</a></td>
-                <td>{{ row.Company }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</section>
-
-<hr class="card-separator" aria-hidden="true">
-
-<section class="card">
-    <h2>By company</h2>
-    <table class="data-table">
-        <thead><tr><th>NPANXX</th><th>Company</th></tr></thead>
-        <tbody>
-        {% for row in by_company %}
-            <tr>
-                <td><a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPANXX}) }}">{{ row.NPANXX }}</a></td>
-                <td>{{ row.Company }}</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    {% if rows %}
+        <table class="data-table data-table--sortable">
+            <thead>
+                <tr>
+                    <th scope="col">
+                        <a
+                            class="data-table-sort{% if sort == 'npanxx' %} data-table-sort--active{% endif %}"
+                            href="{{ url_for('browse.rate_center_detail', rc=rate_center, state=state, country='US', sort='npanxx') }}#rate-center-codes"
+                        >NPANXX</a>
+                    </th>
+                    <th scope="col">
+                        <a
+                            class="data-table-sort{% if sort == 'company' %} data-table-sort--active{% endif %}"
+                            href="{{ url_for('browse.rate_center_detail', rc=rate_center, state=state, country='US', sort='company') }}#rate-center-codes"
+                        >Company</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in rows %}
+                <tr>
+                    <td><a href="{{ url_for('lookup.office_codes', **{'npa-nxx': row.NPANXX}) }}">{{ row.NPANXX }}</a></td>
+                    <td>{{ row.Company }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No office codes found for this rate center.</p>
+    {% endif %}
 </section>
 {% endblock %}

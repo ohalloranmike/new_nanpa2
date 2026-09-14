@@ -1,55 +1,71 @@
 {% extends "base.html" %}
 {% block content %}
-<section class="card">
+<section class="card" id="aclist">
     <h2>Area Code List</h2>
-    <p class="meta">All area codes sorted by NPA, grouped by assignment status.</p>
-</section>
-
-<hr class="card-separator" aria-hidden="true">
-
-<section class="card">
-    <h2>Assigned</h2>
-    {% if assigned %}
-        {% for item in assigned %}
-            <p>
-                <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
-                — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
-            </p>
-        {% endfor %}
+    <p class="meta">NANPA area code report. Filter by assignment status; click a column header to sort.</p>
+    <form method="get" action="{{ url_for('lists.area_code_list') }}#aclist">
+        <input type="hidden" name="sort" value="{{ sort }}">
+        <input type="hidden" name="dir" value="{{ sort_dir }}">
+        <label for="status">Status</label>
+        <select id="status" name="status" onchange="this.form.submit()">
+            {% for key, label in status_labels.items() %}
+                <option value="{{ key }}" {% if key == status %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    <p class="meta" style="margin-top: 1rem;">{{ items|length }} area code{% if items|length != 1 %}s{% endif %}</p>
+    {% if items %}
+        <div class="data-table-dual-scroll" data-table-dual-scroll>
+            <div class="data-table-scroll-top" aria-hidden="true">
+                <div class="data-table-scroll-spacer"></div>
+            </div>
+            <div class="data-table-scroll-body">
+            <table class="data-table data-table--sortable data-table--pin-first-col">
+                <thead>
+                    <tr>
+                        {% for column, label, field in columns %}
+                            {% if sort == column and sort_dir == 'asc' %}
+                                {% set next_dir = 'desc' %}
+                            {% else %}
+                                {% set next_dir = 'asc' %}
+                            {% endif %}
+                            <th scope="col">
+                                <a
+                                    class="data-table-sort{% if sort == column %} data-table-sort--active{% endif %}"
+                                    href="{{ url_for('lists.area_code_list', sort=column, dir=next_dir, status=status) }}#aclist"
+                                >
+                                    {{ label }}
+                                    {% if sort == column %}
+                                        <span class="data-table-sort-indicator" aria-hidden="true">{{ '↑' if sort_dir == 'asc' else '↓' }}</span>
+                                    {% endif %}
+                                </a>
+                            </th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in items %}
+                    <tr>
+                        {% for column, label, field in columns %}
+                            <td>
+                                {% if column == 'npa' and row[field] %}
+                                    <a href="{{ url_for('lookup.area_codes', npa=row[field]) }}">{{ row[field] }}</a>
+                                {% else %}
+                                    {{ row[field] or '' }}
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            </div>
+        </div>
     {% else %}
-        <p>No assigned area codes.</p>
+        <p>No area codes match this filter.</p>
     {% endif %}
 </section>
-
-<hr class="card-separator" aria-hidden="true">
-
-<section class="card">
-    <h2>Reserved</h2>
-    {% if reserved %}
-        {% for item in reserved %}
-            <p>
-                <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
-                — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
-            </p>
-        {% endfor %}
-    {% else %}
-        <p>No reserved area codes.</p>
-    {% endif %}
-</section>
-
-<hr class="card-separator" aria-hidden="true">
-
-<section class="card">
-    <h2>Unassigned and not reserved</h2>
-    {% if unassigned %}
-        {% for item in unassigned %}
-            <p>
-                <a href="{{ url_for('lookup.area_codes', npa=item.NPA_ID) }}"><strong>{{ item.NPA_ID }}</strong></a>
-                — {{ item.type_of_code }}, {{ item.location }}, {{ item.country }}
-            </p>
-        {% endfor %}
-    {% else %}
-        <p>No unassigned area codes.</p>
-    {% endif %}
-</section>
+{% endblock %}
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/data-table-dual-scroll.js') }}"></script>
 {% endblock %}

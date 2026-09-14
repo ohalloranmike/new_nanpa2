@@ -19,6 +19,12 @@ def _company_sort_mode(sort: str) -> str:
     return "npanxx"
 
 
+def _rate_center_sort_mode(sort: str) -> str:
+    if (sort or "").strip().lower() == "company":
+        return "company"
+    return "npanxx"
+
+
 @router.get("/compstate", name="browse.companies_by_state")
 def companies_by_state(request: Request, cs: str = Query("")):
     state = _normalize_us_state(cs.strip())
@@ -58,6 +64,7 @@ def rate_center_detail(
     rc: str = Query(""),
     state: str = Query(""),
     country: str = Query(""),
+    sort: str = Query(""),
 ):
     rate_center = rc.strip()
     state = state.strip()
@@ -65,14 +72,16 @@ def rate_center_detail(
     if not rate_center or not country:
         return render(request, "error.html", {"error": "Missing rate center parameters."}, 400)
 
+    sort_mode = _rate_center_sort_mode(sort) if sort.strip() else "npanxx"
+
     if country == "US":
         state = _normalize_us_state(state)
-        by_npanxx = fetch_all(
-            "SELECT NPANXX, Company FROM oc WHERE RateCenter = ? AND State = ? ORDER BY NPANXX",
-            (rate_center, state),
-        )
-        by_company = fetch_all(
-            "SELECT NPANXX, Company FROM oc WHERE RateCenter = ? AND State = ? ORDER BY Company, NPANXX",
+        if sort_mode == "company":
+            order = "ORDER BY Company, NPANXX"
+        else:
+            order = "ORDER BY NPANXX"
+        rows = fetch_all(
+            f"SELECT NPANXX, Company FROM oc WHERE RateCenter = ? AND State = ? {order}",
             (rate_center, state),
         )
         return render(
@@ -81,18 +90,18 @@ def rate_center_detail(
             {
                 "rate_center": rate_center,
                 "state": state,
-                "by_npanxx": by_npanxx,
-                "by_company": by_company,
+                "rows": rows,
+                "sort": sort_mode,
             },
         )
 
     if country == "CANADA":
-        by_npanxx = fetch_all(
-            "SELECT NPA, COCodeNXX, Company FROM caoc WHERE ExchangeArea = ? ORDER BY NPA, COCodeNXX",
-            (rate_center,),
-        )
-        by_company = fetch_all(
-            "SELECT NPA, COCodeNXX, Company FROM caoc WHERE ExchangeArea = ? ORDER BY Company, NPA, COCodeNXX",
+        if sort_mode == "company":
+            order = "ORDER BY Company, NPA, COCodeNXX"
+        else:
+            order = "ORDER BY NPA, COCodeNXX"
+        rows = fetch_all(
+            f"SELECT NPA, COCodeNXX, Company FROM caoc WHERE ExchangeArea = ? {order}",
             (rate_center,),
         )
         return render(
@@ -101,8 +110,8 @@ def rate_center_detail(
             {
                 "rate_center": rate_center,
                 "state": state,
-                "by_npanxx": by_npanxx,
-                "by_company": by_company,
+                "rows": rows,
+                "sort": sort_mode,
             },
         )
 
