@@ -1,6 +1,13 @@
 from fastapi import APIRouter, Query, Request
 
-from app.constants import CANADA_AC_LOCATION, CANADA_PT, STATES, US_STATE_QUERY_ALIASES, US_TERRITORIES
+from app.constants import (
+    CANADA_AC_LOCATION,
+    CANADA_PT,
+    STATES,
+    US_STATE_QUERY_ALIASES,
+    US_TERRITORIES,
+    canonical_territory_browse_code,
+)
 from app.database import fetch_all
 from app.maps import canada_map_images, country_map_for_location, territory_map_for_code, us_state_map_images
 from app.templating import render
@@ -9,7 +16,20 @@ router = APIRouter()
 
 
 def _normalize_us_state(state: str) -> str:
-    return US_STATE_QUERY_ALIASES.get(state.upper(), state.upper())
+    state = canonical_territory_browse_code(state)
+    if state in US_TERRITORIES:
+        return state
+    return US_STATE_QUERY_ALIASES.get(state, state)
+
+
+def _resolve_us_browse_region(code: str) -> str | None:
+    code = canonical_territory_browse_code(code)
+    if code in US_TERRITORIES or code in STATES:
+        return code
+    mapped = US_STATE_QUERY_ALIASES.get(code)
+    if mapped and mapped in STATES:
+        return mapped
+    return None
 
 
 def _company_sort_mode(sort: str) -> str:
@@ -27,8 +47,8 @@ def _rate_center_sort_mode(sort: str) -> str:
 
 @router.get("/compstate", name="browse.companies_by_state")
 def companies_by_state(request: Request, cs: str = Query("")):
-    state = _normalize_us_state(cs.strip())
-    if state not in STATES and state not in US_TERRITORIES:
+    state = _resolve_us_browse_region(cs)
+    if not state:
         return render(request, "error.html", {"error": "Invalid state selection."}, 400)
 
     rows = fetch_all(
@@ -40,8 +60,8 @@ def companies_by_state(request: Request, cs: str = Query("")):
 
 @router.get("/rcstate", name="browse.rate_centers_by_state")
 def rate_centers_by_state(request: Request, rcs: str = Query("")):
-    state = _normalize_us_state(rcs.strip())
-    if state not in STATES and state not in US_TERRITORIES:
+    state = _resolve_us_browse_region(rcs)
+    if not state:
         return render(request, "error.html", {"error": "Invalid state selection."}, 400)
 
     rows = fetch_all(
@@ -184,7 +204,7 @@ def company_detail(
 
 @router.get("/acmaps", name="browse.area_code_maps")
 def area_code_maps(request: Request, state: str = Query("")):
-    state = state.strip().upper()
+    state = canonical_territory_browse_code(state)
     if not state:
         return render(request, "error.html", {"error": "Please choose a state or region."}, 400)
 

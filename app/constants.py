@@ -52,12 +52,18 @@ STATES = {
     "WY": "WYOMING",
 }
 
+# Keys match NANPA npa_report.csv LOCATION (and oc.State after ingest normalizes NN → CNMI).
 US_TERRITORIES = {
     "AS": "AMERICAN SAMOA",
     "CNMI": "NORTHERN MARIANNA ISLANDS",
     "GU": "GUAM",
     "PR": "PUERTO RICO",
-    "USVI": "US VIRGIN ISLANDS",
+    "VI": "US VIRGIN ISLANDS",
+}
+
+# Old browse URLs / labels before aligning with NANPA LOCATION codes.
+LEGACY_TERRITORY_BROWSE_CODES = {
+    "USVI": "VI",
 }
 
 CANADA_PT_ABBR = {
@@ -109,16 +115,21 @@ US_OFFICE_USE = {
     "UA": 'UA indicates codes that are "UNAVAILABLE" for assignment.',
 }
 
+# Office-code file uses NN; npa_report and normalized oc use CNMI.
 TERRITORY_STATE_ALIASES = {
-    "VI": "USVI",
     "NN": "CNMI",
     "PR": "PR",
     "AS": "AS",
     "GU": "GU",
+    "VI": "VI",
+    "CNMI": "CNMI",
 }
+
+
+def canonical_territory_browse_code(code: str) -> str:
+    code = (code or "").strip().upper()
+    return LEGACY_TERRITORY_BROWSE_CODES.get(code, code)
 
 US_STATE_QUERY_ALIASES = {
     "PUERTO RICO": "PR",
-    "USVI": "VI",
-    "CNMI": "NN",
 }

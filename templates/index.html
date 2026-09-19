@@ -58,7 +58,15 @@
 
 <section class="card">
     <h2>US Territories</h2>
-    <div class="grid-2">
+    <p class="meta">Click a territory for area code maps. Shapes are simplified and placed for clarity (not true scale). Scroll to zoom, drag to pan, or use the + / − controls.</p>
+    <div
+        id="us-territories-map"
+        class="intl-map"
+        data-geo-url="{{ url_for('static', filename='maps/us-territories.geojson') }}?v=2"
+        aria-label="US territories map"
+    ></div>
+    <script id="us-territories-map-data" type="application/json">{{ us_map_territories | tojson }}</script>
+    <div class="grid-2 us-states-map-follow">
         {{ state_form(url_for('browse.area_code_maps'), 'state', 'Area codes by territory', us_territories) }}
         {{ state_form(url_for('browse.rate_centers_by_state'), 'rcs', 'Rate centers by territory', us_territories) }}
         {{ state_form(url_for('browse.companies_by_state'), 'cs', 'Operating companies by territory', us_territories) }}
@@ -100,4 +108,5 @@
 <script src="{{ url_for('static', filename='js/d3.min.js') }}"></script>
 <script src="{{ url_for('static', filename='js/us-states-map.js') }}?v=2"></script>
 <script src="{{ url_for('static', filename='js/canada-provinces-map.js') }}?v=2"></script>
+<script src="{{ url_for('static', filename='js/us-territories-map.js') }}?v=1"></script>
 {% endblock %}

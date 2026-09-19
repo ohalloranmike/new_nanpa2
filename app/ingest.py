@@ -240,6 +240,11 @@ def _load_us_office_codes(conn, path: Path) -> None:
     fixed_headers = _unique_headers([_sanitize_header(item) for item in headers])
     _create_table(conn, "oc", fixed_headers)
     data = _clean_rows(rows[1:])
+    if "State" in fixed_headers:
+        state_idx = fixed_headers.index("State")
+        for row in data:
+            if state_idx < len(row) and row[state_idx] == "NN":
+                row[state_idx] = "CNMI"
     _insert_rows(conn, "oc", data)
 
 

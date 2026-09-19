@@ -7,7 +7,7 @@ TERRITORY_MAPS = {
     "AS": "American_Samoa_684.gif",
     "GU": "Guam_671.gif",
     "CNMI": "Northern_Marianna_Islands_670.gif",
-    "USVI": "US_Virgin_Islands_340.gif",
+    "VI": "US_Virgin_Islands_340.gif",
 }
 
 CANADA_MAPS = {

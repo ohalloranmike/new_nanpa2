@@ -18,7 +18,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Interactive zoomable world map on `/international` colored by national phone number length (scroll/pinch zoom, drag to pan, +/- and reset controls; bundled D3 + Natural Earth GeoJSON — no external map tiles at runtime)
 - Supplemental international regions from libphonenumber (245 countries/territories) with NANP area-code context for +1 territories
 - Feature parity with original app routes
-- Zoomable clickable US state and Canada province/territory maps on the home page (bundled D3 + Natural Earth boundaries) linking to area code maps per region
+- Zoomable clickable US state, US territory (schematic layout), and Canada province/territory maps on the home page (bundled D3 + Natural Earth boundaries) linking to area code maps per region
 - Home **Lists** links for US/Canada operating companies (`/ocnall`, `/canadaocnall`) with on-page sort by company or OCN; Canada exchange list (`/canadaexall`) grouped by CNAC status with sort by NPA-NXX or company
 
 ## Requirements
@@ -283,10 +283,12 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | `static/maps/world-countries.geojson` | [Natural Earth](https://www.naturalearthdata.com/) 110m country boundaries (`ISO_A2`, continent/subregion) | International choropleth map; continent and country names for supplemental `intl_country` rows |
 | `static/maps/us-states.geojson` | Natural Earth 110m US state boundaries (filtered to NANPA state codes) | Home page US state map |
 | `static/maps/canada-provinces.geojson` | Natural Earth 50m Canada province/territory boundaries (mapped to CNAC browse regions) | Home page Canada map |
+| `static/maps/us-territories.geojson` | Natural Earth 50m territory outlines (PR, GU, AS, CNMI, VI), repositioned for a schematic home-page layout (`scripts/build_us_territories_geojson.py`) | Home page US territories map |
 | `static/js/d3.min.js` | D3.js v7 (minified, bundled) | International map rendering |
 | `static/js/international-map.js` | Map interaction (choropleth, legend, zoom/pan, controls, hover, click-through) | `/international` world map |
 | `static/js/us-states-map.js` | US state map (zoom/pan, controls, hover, click-through to `/acmaps`) | Home page |
 | `static/js/canada-provinces-map.js` | Canada province/territory map (zoom/pan, controls, grouped hover for multi-polygon browse regions such as YT-NWT-NU and NS-PEI, click-through to `/acmaps`) | Home page |
+| `static/js/us-territories-map.js` | US territories map (zoom/pan, controls, hover, click-through to `/acmaps`) | Home page |
 
 Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `OfficeCodeDatabaseDefinitions.csv`, `FGD-CIC.csv`, `FGB-CIC.csv`) are legacy reference material from the original app and are not loaded by current routes.
 
