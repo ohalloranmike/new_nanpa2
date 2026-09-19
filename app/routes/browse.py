@@ -10,6 +10,7 @@ from app.constants import (
 )
 from app.database import fetch_all
 from app.maps import canada_map_images, country_map_for_location, territory_map_for_code, us_state_map_images
+from app.nanpa_regulators import regulator_for_browse_state
 from app.templating import render
 
 router = APIRouter()
@@ -208,6 +209,8 @@ def area_code_maps(request: Request, state: str = Query("")):
     if not state:
         return render(request, "error.html", {"error": "Please choose a state or region."}, 400)
 
+    regulator = regulator_for_browse_state(state)
+
     if state in STATES:
         npas = _npas_for_location(state)
         return render(
@@ -218,6 +221,7 @@ def area_code_maps(request: Request, state: str = Query("")):
                 "state_code": state,
                 "npas": npas,
                 "map_images": us_state_map_images(state),
+                "regulator": regulator,
             },
         )
 
@@ -231,6 +235,7 @@ def area_code_maps(request: Request, state: str = Query("")):
                 "state_code": CANADA_PT[state],
                 "npas": npas,
                 "map_images": canada_map_images(state),
+                "regulator": regulator,
             },
         )
 
@@ -244,6 +249,7 @@ def area_code_maps(request: Request, state: str = Query("")):
                 "territory_code": state,
                 "npas": npas,
                 "map_file": territory_map_for_code(state),
+                "regulator": regulator,
             },
         )
 
@@ -261,6 +267,7 @@ def area_code_maps(request: Request, state: str = Query("")):
             "state": state,
             "npas": npas,
             "map_file": map_file,
+            "regulator": regulator,
         },
     )
 

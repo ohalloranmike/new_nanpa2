@@ -20,6 +20,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Feature parity with original app routes
 - Zoomable clickable US state, US territory (schematic layout), and Canada province/territory maps on the home page (bundled D3 + Natural Earth boundaries) linking to area code maps per region
 - Home **Lists**: full area code table (`/aclist`, all NANPA fields, status filter, sortable columns, dual horizontal scroll with pinned NPA); US/Canada operating company tables (`/ocnall`, `/canadaocnall`) with sortable column headers; Canada exchange list (`/canadaexall`) with status filter and sortable columns (NPA sort includes NXX)
+- **Numbering regulator** card at the top of area code map browse (`/acmaps?state=`) and area code detail (`/areacodes?npa=`) pages: [NANPA](https://www.nanpa.com/) for US states and territories, [CNA](https://www.cnac.ca/index.htm) for Canada, and national regulators for Caribbean NANP members (see `app/nanpa_regulators.py`)
 
 ## Requirements
 
@@ -203,6 +204,7 @@ nanpa2/
     ingest.py            # Download and SQLite rebuild logic
     international.py     # International E.164 ingest and validation
     international_regulators.py
+    nanpa_regulators.py   # NANP regulator links (US/territories, Canada, Caribbean)
     maps.py
     templating.py        # Jinja2 helpers and url_for compatibility
     routes/
@@ -267,6 +269,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 |--------|--------------|----------|
 | `app/international_regulators.py` → `REGULATORS` | National regulator name and website for selected countries (e.g. NANPA, CNAC, Ofcom, ARCEP) | Regulator links on international country pages |
 | `app/international_regulators.py` → `ITU_REFERENCES` | ITU-T E.164 and dialling procedure references | Official reference links on international pages |
+| `app/nanpa_regulators.py` → `NANPA_US`, `CANADIAN_NUMBERING_ADMIN`, `NANP_MEMBER_REGULATORS` | Numbering administrator/regulator name and URL for US states, US territories, Canada, and home-page Caribbean NANP countries | “Numbering regulator” card on `/acmaps` and `/areacodes` (via `regulator_card` in `templates/macros.html`) |
 
 ### Bundled static files (shipped with the repo)
 

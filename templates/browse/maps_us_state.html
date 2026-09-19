@@ -1,5 +1,7 @@
 {% extends "base.html" %}
+{% from "macros.html" import regulator_card %}
 {% block content %}
+{{ regulator_card(regulator) }}
 <section class="card">
     <h2>{{ title }} ({{ state_code }})</h2>
     <div class="pill-list">

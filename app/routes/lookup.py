@@ -14,6 +14,7 @@ from app.maps import (
     territory_map_for_code,
     us_state_map_images,
 )
+from app.nanpa_regulators import regulator_for_area_code
 from app.templating import render
 
 router = APIRouter()
@@ -32,6 +33,7 @@ def area_codes(request: Request, npa: str = Query("", min_length=0)):
     ac_data = row_to_dict(ac_row)
     location = ac_row["LOCATION"]
     country = ac_row["country"]
+    regulator = regulator_for_area_code(country, location)
     office_codes_by_status = {}
 
     if country == "US":
@@ -57,6 +59,7 @@ def area_codes(request: Request, npa: str = Query("", min_length=0)):
                     "state_code": location,
                     "office_codes_by_status": office_codes_by_status,
                     "map_images": us_state_map_images(location),
+                    "regulator": regulator,
                 },
             )
 
@@ -72,6 +75,7 @@ def area_codes(request: Request, npa: str = Query("", min_length=0)):
                     "territory_code": territory_code,
                     "office_codes_by_status": office_codes_by_status,
                     "map_file": territory_map_for_code(territory_code),
+                    "regulator": regulator,
                 },
             )
 
@@ -98,6 +102,7 @@ def area_codes(request: Request, npa: str = Query("", min_length=0)):
                 "province_abbr": province_abbr,
                 "office_codes_by_status": office_codes_by_status,
                 "map_images": canada_map_images(location),
+                "regulator": regulator,
             },
         )
 
@@ -110,6 +115,7 @@ def area_codes(request: Request, npa: str = Query("", min_length=0)):
             "ac": ac_data,
             "location": location,
             "map_file": map_file,
+            "regulator": regulator,
         },
     )
 
