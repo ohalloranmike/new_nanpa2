@@ -19,7 +19,7 @@ Repository: https://github.com/mohal2_nike/nanpa2
 - Supplemental international regions from libphonenumber (245 countries/territories) with NANP area-code context for +1 territories
 - Feature parity with original app routes
 - Zoomable clickable US state, US territory (schematic layout), and Canada province/territory maps on the home page (bundled D3 + Natural Earth boundaries) linking to area code maps per region
-- Home **Lists** links for US/Canada operating companies (`/ocnall`, `/canadaocnall`) with on-page sort by company or OCN; Canada exchange list (`/canadaexall`) grouped by CNAC status with sort by NPA-NXX or company
+- Home **Lists**: full area code table (`/aclist`, all NANPA fields, status filter, sortable columns, dual horizontal scroll with pinned NPA); US/Canada operating company tables (`/ocnall`, `/canadaocnall`) with sortable column headers; Canada exchange list (`/canadaexall`) with status filter and sortable columns (NPA sort includes NXX)
 
 ## Requirements
 
@@ -249,7 +249,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | Table | Built from | What you get |
 |-------|------------|--------------|
 | `ac` | `npa_report.csv` | US area code records |
-| `oc` | US office code text file | US office code records |
+| `oc` | US office code text file | US office code records (`State` **NN** from NANPA is stored as **CNMI** to match `npa_report.csv` **LOCATION**) |
 | `caoc` | `COCodeStatus_ALL.csv` | Canada office code records |
 | `ocn` | `oc` | Distinct US operating companies (OCN + company name) |
 | `intl_country` | `international_countries.json` + phonenumbers/libphonenumber gaps + enrichments below | International country overview records |
@@ -300,3 +300,5 @@ Other CSV files under `static/NANPA/` (`AreaCodeDatabaseDefinitions.csv`, `Offic
 - `international_countries.json` is downloaded with other source files and is also gitignored.
 - First run may take a minute while source files download and the database is built.
 - The US office code file parser ignores NANPA's trailing header-only `File Updated` column.
+- US territory browse keys match NANPA area-code **LOCATION** codes (`PR`, `GU`, `AS`, `CNMI`, `VI` for the US Virgin Islands). Legacy `?state=USVI` URLs redirect to `VI`.
+- Rebuild schematic territory outlines after editing layout: `python scripts/build_us_territories_geojson.py` (requires network; uses Natural Earth via GitHub).
