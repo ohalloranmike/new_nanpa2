@@ -1,0 +1,19 @@
+---
+description: Push nanpa2 commits to both work and personal GitHub remotes
+alwaysApply: true
+---
+
+# Dual-remote push (nanpa2)
+
+When the user asks to push, publish, or sync this repo—or when a task ends with pushing after an explicit commit request—push **both** remotes on the current branch (usually `master`):
+
+1. **Work:** `origin` → `git@github.com:mohal2_nike/nanpa2.git`
+2. **Personal:** `personal` → `https://github.com/ohalloranmike/new_nanpa2.git`
+
+```bash
+git push origin master && git push personal master
+```
+
+Use the actual branch name if not `master`. Do not push to only one remote unless the user explicitly asks for a single destination.
+
+Do not push without a commit when the user only asked to push existing commits. Do not commit unless the user asked for a commit (per project git safety rules).
