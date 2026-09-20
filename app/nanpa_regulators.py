@@ -30,7 +30,8 @@ NANP_MEMBER_REGULATORS: dict[str, dict[str, str]] = {
     },
     "BARBADOS": {
         "name": "Telecommunications Unit, Government of Barbados",
-        "url": "https://telecoms.gov.bb/",
+        # telecoms.gov.bb currently serves an expired TLS certificate; gov.bb is the live portal.
+        "url": "https://www.gov.bb/Departments/telecommunications",
     },
     "BERMUDA": {
         "name": "Regulatory Authority of Bermuda",
@@ -46,7 +47,7 @@ NANP_MEMBER_REGULATORS: dict[str, dict[str, str]] = {
     },
     "DOMINICA": {
         "name": "National Telecommunications Regulatory Commission (NTRC)",
-        "url": "https://ntrcdominica.dm/",
+        "url": "https://ntrcdom.org/",
     },
     "DOMINICAN REPUBLIC": {
         "name": "Instituto Dominicano de las Telecomunicaciones (INDOTEL)",
