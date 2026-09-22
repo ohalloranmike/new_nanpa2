@@ -6,6 +6,7 @@ from app.international import (
     is_nanp_member,
     itu_references,
     map_dial_label,
+    special_numbering_summaries,
     validate_phone_number,
 )
 from app.templating import render
@@ -187,6 +188,7 @@ def international_country(
             "country": country_dict,
             "dialing": dialing,
             "same_code_countries": [row_to_dict(row) for row in same_code],
+            "special_numbering": special_numbering_summaries(iso2),
             "validation": validation,
             "phone_query": phone,
             "itu_references": itu_references(),

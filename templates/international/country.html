@@ -121,6 +121,43 @@
     </dl>
 </section>
 
+{% if special_numbering %}
+<section class="card">
+    <h3>Special numbering</h3>
+    <p class="meta">
+        Toll-free, shared-cost, premium, and other non-geographic ranges from
+        <a href="https://github.com/google/libphonenumber" target="_blank" rel="noopener noreferrer">libphonenumber</a>
+        metadata. Syntax and format only — not in-service verification. Some ranges may not be dialable from abroad.
+    </p>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">National length</th>
+                <th scope="col">Example (national)</th>
+                <th scope="col">Example (international)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in special_numbering %}
+            <tr>
+                <td>{{ row.type }}</td>
+                <td>
+                    {% if row.length_min == row.length_max %}
+                        {{ row.length_min }} digits
+                    {% else %}
+                        {{ row.length_min }}–{{ row.length_max }} digits
+                    {% endif %}
+                </td>
+                <td>{{ row.example_national or "—" }}</td>
+                <td>{{ row.example_international or "—" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</section>
+{% endif %}
+
 {% if same_code_countries %}
 <section class="card">
     <h3>Other +{{ dialing.e164 }} countries</h3>

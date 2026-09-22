@@ -11,6 +11,18 @@ from phonenumbers import PhoneNumberType
 from app.config import Config
 from app.international_regulators import ITU_REFERENCES, NANP_ISO2, REGULATORS
 
+# libphonenumber metadata fields surfaced on international country pages (Phase A).
+_SPECIAL_NUMBER_METADATA: tuple[tuple[PhoneNumberType, str, str], ...] = (
+    (PhoneNumberType.TOLL_FREE, "toll_free", "Toll-free"),
+    (PhoneNumberType.SHARED_COST, "shared_cost", "Shared cost"),
+    (PhoneNumberType.PREMIUM_RATE, "premium_rate", "Premium rate"),
+    (PhoneNumberType.UAN, "uan", "UAN"),
+    (PhoneNumberType.VOICEMAIL, "voicemail", "Voicemail"),
+    (PhoneNumberType.PERSONAL_NUMBER, "personal_number", "Personal number"),
+    (PhoneNumberType.PAGER, "pager", "Pager"),
+    (PhoneNumberType.VOIP, "voip", "VoIP"),
+)
+
 INTERNATIONAL_FILENAME = "international_countries.json"
 
 _TYPE_LABELS = {
@@ -349,3 +361,53 @@ def dialing_display(country: dict) -> dict:
 
 def itu_references() -> list[dict[str, str]]:
     return ITU_REFERENCES
+
+
+def special_numbering_summaries(iso2: str) -> list[dict[str, str | int | None]]:
+    """Non-geographic / special ranges from libphonenumber (syntax metadata only)."""
+    iso2 = iso2.strip().upper()
+    if iso2 in NANP_ISO2:
+        return []
+
+    try:
+        metadata = phonenumbers.PhoneMetadata.metadata_for_region(iso2)
+    except Exception:
+        return []
+    if metadata is None:
+        return []
+
+    rows: list[dict[str, str | int]] = []
+    for number_type, attr, label in _SPECIAL_NUMBER_METADATA:
+        descriptor = getattr(metadata, attr, None)
+        if descriptor is None:
+            continue
+        pattern = (descriptor.national_number_pattern or "").strip()
+        if not pattern:
+            continue
+        lengths = sorted(descriptor.possible_length or [])
+        if not lengths:
+            continue
+
+        example_national = ""
+        example_international = ""
+        try:
+            example = phonenumbers.example_number_for_type(iso2, number_type)
+        except Exception:
+            example = None
+        if example is not None:
+            example_national = phonenumbers.format_number(example, phonenumbers.PhoneNumberFormat.NATIONAL)
+            example_international = phonenumbers.format_number(
+                example, phonenumbers.PhoneNumberFormat.INTERNATIONAL
+            )
+
+        rows.append(
+            {
+                "type": label,
+                "example_national": example_national,
+                "example_international": example_international,
+                "length_min": lengths[0],
+                "length_max": lengths[-1],
+            }
+        )
+
+    return rows

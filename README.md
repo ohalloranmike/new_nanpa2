@@ -72,6 +72,7 @@ Features:
 - **NANP context** — territories that share country calling code +1 (e.g. Anguilla, Jamaica) show their NANP area code on list and detail pages so +1 is not mistaken for the United States alone
 - Links to national regulators where curated (e.g. Ofcom, CNAC, NANPA)
 - Per-country phone number validation (syntax/rules only)
+- **Special numbering** on country detail pages (outside US/Canada NANP detail): toll-free, shared-cost, premium, UAN, and related non-geographic ranges summarized from libphonenumber metadata, with national length and example formats
 - US and Canada link back to existing NANP area code and office code detail
 - Filter by continent or search by country name, ISO code, or calling code
 - **Supplemental regions** — countries present in libphonenumber but missing from the VoixCall JSON are added at refresh time (names from Natural Earth GeoJSON or pycountry; dialling fields may show — where VoixCall had no data)
@@ -260,7 +261,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 
 | Source | What you get | Used for |
 |--------|--------------|----------|
-| [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers) (Google [libphonenumber](https://github.com/google/libphonenumber) metadata bundled in the package) | National number length ranges, example numbers, parse/validate rules, and regions missing from VoixCall | International country detail (`national_length_min` / `max`, `lib_example`), supplemental `intl_country` rows, and per-country phone validation on `/international/{iso2}?phone=...` |
+| [phonenumbers](https://github.com/daviddrysdale/python-phonenumber) (Google [libphonenumber](https://github.com/google/libphonenumber) metadata bundled in the package) | National number length ranges, example numbers, parse/validate rules, special-number-type metadata (toll-free, shared cost, premium, UAN, etc.), and regions missing from VoixCall | International country detail (`national_length_min` / `max`, `lib_example`, **Special numbering** table via `special_numbering_summaries()`), supplemental `intl_country` rows, and per-country phone validation on `/international/{iso2}?phone=...` |
 | [pycountry](https://github.com/flyingcircusio/pycountry) | ISO 3166-1 country names for supplemental regions | Country names when not present in the bundled Natural Earth map data |
 
 ### Curated in code (not downloaded)
