@@ -6,6 +6,9 @@
 <section class="card">
     <p><a href="{{ url_for('international.index') }}">&larr; All international countries</a></p>
     <h2>{{ country.name }}</h2>
+    {% if primary_currency %}
+    <p class="meta country-currency">Currency: {{ primary_currency.name }} ({{ primary_currency.code }})</p>
+    {% endif %}
     <p class="meta">ISO {{ country.iso2 }} · {{ country.continent or "Region unknown" }}</p>
 </section>
 

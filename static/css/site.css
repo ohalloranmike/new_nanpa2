@@ -324,6 +324,11 @@ html[data-theme="nanpa"] .header-nav.nav a {
   font-size: 0.9rem;
 }
 
+.country-currency {
+  font-size: 0.85rem;
+  margin: 0.15rem 0 0.35rem;
+}
+
 main,
 .site-main {
   padding: 1.5rem 0 2rem;

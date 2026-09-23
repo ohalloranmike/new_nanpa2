@@ -73,6 +73,7 @@ Features:
 - Links to national regulators where curated (e.g. Ofcom, CNAC, NANPA)
 - Per-country phone number validation (syntax/rules only)
 - **Special numbering** on country detail pages (outside US/Canada NANP detail): toll-free, shared-cost, premium, UAN, and related non-geographic ranges summarized from libphonenumber metadata, with national length and example formats
+- **Primary currency** (ISO 4217 name and code) on international country detail pages, shown under the country name in smaller type
 - US and Canada link back to existing NANP area code and office code detail
 - Filter by continent or search by country name, ISO code, or calling code
 - **Supplemental regions** — countries present in libphonenumber but missing from the VoixCall JSON are added at refresh time (names from Natural Earth GeoJSON or pycountry; dialling fields may show — where VoixCall had no data)
@@ -271,6 +272,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 | `app/international_regulators.py` → `REGULATORS` | National regulator name and website for selected countries (e.g. NANPA, CNAC, Ofcom, ARCEP) | Regulator links on international country pages |
 | `app/international_regulators.py` → `ITU_REFERENCES` | ITU-T E.164 and dialling procedure references | Official reference links on international pages |
 | `app/nanpa_regulators.py` → `NANPA_US`, `CANADIAN_NUMBERING_ADMIN`, `NANP_MEMBER_REGULATORS` | Numbering administrator/regulator name and URL for US states, US territories, Canada, and home-page Caribbean NANP countries | “Numbering regulator” card on `/acmaps` and `/areacodes` (via `regulator_card` in `templates/macros.html`). Re-check HTTPS with `scripts/verify_nanpa_regulator_links.py` after URL changes. |
+| `static/international/country_primary_currency.json` | Primary ISO 4217 currency per ISO 3166-1 alpha-2 (from [mledoze/countries](https://github.com/mledoze/countries); regenerate with `scripts/build_country_primary_currency.py`) | Currency name and code under the country title on `/international/{iso2}` |
 
 ### Bundled static files (shipped with the repo)
 
