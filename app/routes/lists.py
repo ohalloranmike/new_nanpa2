@@ -1,4 +1,5 @@
 import csv
+from collections import defaultdict
 from pathlib import Path
 
 from fastapi import APIRouter, Query, Request
@@ -7,6 +8,23 @@ from app.database import fetch_all, row_to_dict
 from app.templating import render
 
 router = APIRouter()
+
+_SPECIAL_SERVICE_US_CA = "United States and Canada"
+_SPECIAL_SERVICE_PAGE_TITLE = "Special Service Numbers (Intl.)"
+
+
+def _sort_special_service_rows(rows: list[list[str]]) -> list[list[str]]:
+    """United States and Canada first, then other countries A–Z; preserve row order within each country."""
+    groups: dict[str, list[list[str]]] = defaultdict(list)
+    for row in rows:
+        groups[row[0]].append(row)
+    ordered_countries = []
+    if _SPECIAL_SERVICE_US_CA in groups:
+        ordered_countries.append(_SPECIAL_SERVICE_US_CA)
+    ordered_countries.extend(
+        sorted((name for name in groups if name != _SPECIAL_SERVICE_US_CA), key=str.casefold)
+    )
+    return [row for country in ordered_countries for row in groups[country]]
 
 
 _ACLIST_STATUS_WHERE = {
@@ -125,13 +143,15 @@ def special_service_numbers(request: Request):
     except OSError:
         return render(request, "error.html", {"error": "Unable to load special service numbers list."}, 500)
 
+    rows = _sort_special_service_rows(rows)
+
     return render(
         request,
         "lists/special_service_numbers.html",
         {
             "headers": headers,
             "rows": rows,
-            "page_header": "Special Service Codes",
+            "page_header": _SPECIAL_SERVICE_PAGE_TITLE,
         },
     )
 

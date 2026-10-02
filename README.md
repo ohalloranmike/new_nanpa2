@@ -278,7 +278,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 
 | Local path | What you get | Used for |
 |------------|--------------|----------|
-| `static/NANPA/special_service_numbers.csv` | Reserved extensions (911, 988, 112, etc.) by country/region | Special Service Numbers list |
+| `static/NANPA/special_service_numbers.csv` | Reserved extensions (911, 988, 112, etc.) by country/region | Special Service Numbers (Intl.) list (US/Canada first, then countries A–Z) |
 | `static/NANPA/N11-Codes.csv` | N11 short-code definitions (211, 311, 411, …) | N11 codes list |
 | `static/NANPA/900codes.csv` | 900-series NXX assignments and entities | 900 codes list |
 | `static/USACMaps/` | US state area-code map GIFs (main map plus optional `-inset1` / `-inset2` GIFs per state) | US area code and office code pages |
