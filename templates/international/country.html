@@ -124,6 +124,29 @@
     </dl>
 </section>
 
+{% if numbering_notes %}
+<section class="card">
+    <h3>Numbering notes</h3>
+    <p class="meta">Curated national rules and ranges not yet listed under Special numbering (libphonenumber metadata).</p>
+    {% for note in numbering_notes %}
+    <div class="numbering-note{% if not loop.last %} numbering-note--spaced{% endif %}">
+        <h4 class="numbering-note__title">{{ note.title }}</h4>
+        <p class="meta numbering-note__effective">Effective {{ note.effective_date }}</p>
+        {% for paragraph in note.paragraphs %}
+        <p>{{ paragraph }}</p>
+        {% endfor %}
+        {% if note.references %}
+        <p class="meta">
+            {% for ref in note.references %}
+                <a href="{{ ref.url }}" target="_blank" rel="noopener noreferrer">{{ ref.name }}</a>{% if not loop.last %} · {% endif %}
+            {% endfor %}
+        </p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</section>
+{% endif %}
+
 {% if special_numbering %}
 <section class="card">
     <h3>Special numbering</h3>

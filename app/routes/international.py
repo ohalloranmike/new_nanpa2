@@ -10,6 +10,7 @@ from app.international import (
     validate_phone_number,
 )
 from app.international_currencies import primary_currency
+from app.international_numbering_notes import numbering_notes_for_country
 from app.templating import render
 
 router = APIRouter()
@@ -190,6 +191,7 @@ def international_country(
             "dialing": dialing,
             "same_code_countries": [row_to_dict(row) for row in same_code],
             "special_numbering": special_numbering_summaries(iso2),
+            "numbering_notes": numbering_notes_for_country(iso2),
             "primary_currency": primary_currency(iso2),
             "validation": validation,
             "phone_query": phone,

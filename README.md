@@ -269,6 +269,7 @@ All downloaded files land under `static/NANPA/` and are gitignored except bundle
 
 | Source | What you get | Used for |
 |--------|--------------|----------|
+| `app/international_numbering_notes.py` → `NUMBERING_NOTES` | Curated national numbering rules not yet in libphonenumber special-type metadata (e.g. Spain 400 commercial outbound range) | “Numbering notes” card on selected `/international/{iso2}` pages |
 | `app/international_regulators.py` → `REGULATORS` | National regulator name and website for selected countries (e.g. NANPA, CNAC, Ofcom, ARCEP) | Regulator links on international country pages |
 | `app/international_regulators.py` → `ITU_REFERENCES` | ITU-T E.164 and dialling procedure references | Official reference links on international pages |
 | `app/nanpa_regulators.py` → `NANPA_US`, `CANADIAN_NUMBERING_ADMIN`, `NANP_MEMBER_REGULATORS` | Numbering administrator/regulator name and URL for US states, US territories, Canada, and home-page Caribbean NANP countries | “Numbering regulator” card on `/acmaps` and `/areacodes` (via `regulator_card` in `templates/macros.html`). Re-check HTTPS with `scripts/verify_nanpa_regulator_links.py` after URL changes. |
